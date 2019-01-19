@@ -57,16 +57,16 @@ Os arquivos de templates podem conter variáveis de template, com base no mecani
 Antes de executar qualquer tarefa, o Ansible coletará informações sobre o sistema que está provisionando. Eles são chamados de Facts e incluem uma ampla variedade de informações do sistema, como o número de núcleos de CPU, redes ipv4 e ipv6 disponíveis, discos montados, distribuição Linux e muito mais.
 
 Os Facts costumam ser úteis em configurações de Tarefas ou Templates.
-Por exemplo, o Nginx é comumente configurado para usar como qualquer processador de trabalho, pois há núcleos de CPU. Sabendo disso, você pode escolher configurar seu template do arquivo nginx.conf da seguinte forma:
-user www-data www-data;
-worker_processes {{ ansible_processor_cores }};
+Por exemplo, o Nginx é comumente configurado para usar como qualquer processador de trabalho, pois há núcleos de CPU. Sabendo disso, você pode escolher configurar seu template do arquivo nginx.conf da seguinte forma:\
+user www-data www-data;\
+worker_processes {{ ansible_processor_cores }};\
 pid /var/run/nginx.pid;
 ### E outras configurações ... ###
  
 Ou se você tiver um servidor com múltiplas CPUs, você pode usar:
  
-user www-data www-data;
-worker_processes {{ ansible_processor_cores * ansible_processor_count }};
+user www-data www-data;\
+worker_processes {{ ansible_processor_cores * ansible_processor_count }};\
 pid /var/run/nginx.pid;
 ### E outras configurações ... ###
  
@@ -74,24 +74,13 @@ Todos os facts possíveis começam com ansible_ e estão disponíveis globalment
  
 
 ### Demonstração: ###
-\---
+![image](https://user-images.githubusercontent.com/34744444/51430272-f6a30500-1bff-11e9-8d40-a00f99fb4679.png)
 
-\- hosts: nginx\
- become: yes\
- become_user: root\
- tasks:\
-     \- name: Instala o Nginx\
-       yum:\
-           name:\
-             \- nginx\
-             \- vim\
-           state: absent\
-           purge: yes\
-           update_cache: yes\
-           tags: install_nginx\
 
 OBS: É importante notar que arquivos “yml” são indentados com espaços e nunca com TABS. Vai salvar seu tempo.
 
-Objetivos
-Aprender a configurar hosts usando Ansible
-Implantar o Ansible na empresa
+## Nota final ##
+Todos os meus playbooks serão hospedados neste repositório. 
+Começarei com algo básico, como algum playbook que criei para configurar minha maquina pessoal. 
+
+Fiquem a vontade para fazer pull requests, criticar, elogiar... Enfim, espero que gostem. 
