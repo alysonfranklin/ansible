@@ -52,6 +52,15 @@ dependencies: []
  
 ### Template ###
 Os arquivos de templates podem conter variáveis de template, com base no mecanismo de modelos Jinja2 do Python. Os arquivos aqui devem terminar com a extensão .j2, mas podem ter qualquer nome. Semelhante aos arquivos, não encontraremos um arquivo main.yml no diretório de templates.
+
+### Plugins ###
+Plugins são pedaços de código que aumentam a funcionalidade principal do Ansible. Ansible vem com uma série de plugins úteis, e você pode facilmente escrever o seu próprio.
+
+### Tags ###
+Se você tiver um playbook grande, pode ser útil poder executar uma parte específica da configuração sem executar todo o playbook.
+
+### group_vars ###
+Contém um conjunto de variáveis, por exemplo, nome de usuário e senha do banco de dados.
  
 ### Facts ###
 Antes de executar qualquer tarefa, o Ansible coletará informações sobre o sistema que está provisionando. Eles são chamados de Facts e incluem uma ampla variedade de informações do sistema, como o número de núcleos de CPU, redes ipv4 e ipv6 disponíveis, discos montados, distribuição Linux e muito mais.
