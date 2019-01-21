@@ -93,7 +93,7 @@ Todos os meus playbooks serão hospedados neste repositório.
 Começarei com algo básico, como algum playbook que criei para configurar minha maquina pessoal. 
 
 Para executar o playbook é simples. Basta executar a seguinte instrução:
-ansible-playbook playbook.yml -i arquivo_hosts -e "distro=ubuntu".
+ansible-playbook playbook.yml -i arquivo_hosts -e "distro=ubuntu".\
 Ou: ansible-playbook playbook.yml -i arquivo_hosts all
 
 Fiquem a vontade para fazer pull requests, criticar, elogiar... Enfim, espero que gostem. 
