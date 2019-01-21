@@ -1,0 +1,6 @@
+---
+- hosts: "{{ distro }}"
+  become: true
+  roles:
+    - ubuntu
+    - centos

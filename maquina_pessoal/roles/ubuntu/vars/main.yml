@@ -1,0 +1,10 @@
+---
+# Variáveis Ubuntu
+virtualbox: virtualbox-6.0
+zsh_config: https://bitbucket.org/alysonfranklin/meulinux/raw/2aeefbe2daa27d201ec89ad2c888cb429b8e4d64/home/.zshrc
+git_config: https://bitbucket.org/alysonfranklin/meulinux/raw/b24e1e79744ba5a18e945133bdfe737ece023dd5/home/.gitconfig
+repo_neovim: https://alysonfranklin@bitbucket.org/alysonfranklin/neovim.git
+config_tmux: https://bitbucket.org/alysonfranklin/meulinux/raw/769832ba67072d33c7e189622a94b9ba930fe141/home/.tmux.conf
+key_teamviewer: https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc
+repo_sublimetext: deb https://download.sublimetext.com/ apt/stable/
+down_terraform: https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
