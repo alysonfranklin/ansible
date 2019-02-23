@@ -26,15 +26,15 @@ inventory = ./dev
 
 Depois dos procedimentos acima, você poderá rodar comandos mais simplificados dentro do diretório criado.
 Exemplo:
-$ ansible --list-hosts all
-$ ansible --list-hosts "*"
-$ ansible -m ping database:control
-$ ansible -m ping webserver[0]
-$ ansible -m ping app0*
-$ ansible --list-hosts  \!webserver[0]
-$ ansible --list-hosts  \!webserver
-$ ansible -m command -a "date" webserver
-$ ansible-playbook hostname.yml -e "env=webserver[0]" # Somente quando usar variável no hosts
+$ ansible --list-hosts all\
+$ ansible --list-hosts "*"\
+$ ansible -m ping database:control\
+$ ansible -m ping webserver[0]\
+$ ansible -m ping app0*\
+$ ansible --list-hosts  \!webserver[0]\
+$ ansible --list-hosts  \!webserver\
+$ ansible -m command -a "date" webserver\
+$ ansible-playbook hostname.yml -e "env=webserver[0]" # Somente quando usar variável no hosts\
 $ ansible-playbook playbooks/full.yml --limit webserver
 
 ##### Para criptofrar variaveis no ansible, use ansible-vault. #####
