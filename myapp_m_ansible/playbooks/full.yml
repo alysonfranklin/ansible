@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Atualizando repositórios
+      apt: update_cache=yes cache_valid_time=3600
+# Só execute "update_cache=yes" se o último foi há mais de 3600 segundos = 60 minutos
+
+- import_playbook: control.yml
+- import_playbook: database.yml
+- import_playbook: webserver.yml
+- import_playbook: loadbalancer.yml

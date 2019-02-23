@@ -1,0 +1,32 @@
+---
+  - name: Instalando python-httplib2
+    apt: 
+      name: python-httplib2
+      state: latest
+
+  - name: Instalando Nginx
+    apt: name=nginx state=latest
+
+  - name: Configurando balanceamento no Nginx
+    template: src=templates/nginx.conf.j2 dest=/etc/nginx/sites-available/{{ item.key }} mode=0644
+    with_dict: "{{ sites }}"
+    notify: restart nginx
+
+  - name: Testando sites ativos
+    shell: ls -1 /etc/nginx/sites-enabled
+    register: hosts_ativos
+    changed_when: hosts_ativos.stdout_lines != sites.keys()
+
+  - name: Desativando sites
+    file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
+    with_items: hosts_ativos.stdout_lines
+    when: item not in sites
+    notify: restart nginx
+
+  - name: Ativando balanceamento de carga no Nginx
+    file: src=/etc/nginx/sites-available/{{ item.key }} dest=/etc/nginx/sites-enabled/{{ item.key }} state=link
+    with_dict: "{{ sites }}"
+    notify: restart nginx
+
+  - name: Iniciando NGINX
+    service: name=nginx state=started enabled=yes

@@ -1,0 +1,16 @@
+---
+  - hosts: database
+    become: true
+    roles:
+      - role: mysql
+        db_users: "{{ db_user }}"
+        db_passwords: "{{ db_password }}"
+        db_user_host: '%'
+# ^^ As variáveis estão sendo pegas do arquivo all no diretório group_vars
+
+
+#- { role: mysql, db_name: demo, db_user: demo, db_password: demo, db_user_host: "%" }
+# Dessa forma eu não preciso mexer nas variáveis defaults, pois dei meus próprios valores pra variáveis existentes.
+# Caso as variáveis não seja definida aqui, o mysql será instalado recebendo as variaveis defaults.
+# OBS: Essa forma fascilita, pois fica mais modular e você pode usar a role em outros projetos.
+# Esse tipo de variável também é conhecida como alta prioridade - Usada com traço ou extra vars.

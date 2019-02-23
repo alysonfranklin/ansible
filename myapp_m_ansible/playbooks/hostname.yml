@@ -1,0 +1,9 @@
+---
+  - hosts: "{{ env }}"
+    gather_facts: false
+    tasks:
+      - name: Get server hostname
+        command: hostname
+
+# Modo de uso: ansible-playbook playbooks/hostname.yml -e "env=database"
+# ansible-playbook playbooks/hostname.yml -e "env=all"

@@ -1,0 +1,21 @@
+---
+  - name: Instalando python*-mysqldb
+    apt: 
+      name: [python-mysqldb, python3-mysqldb]
+      state: latest
+
+  - name: Instalando MySQL-Server
+    apt: name=mysql-server state=latest 
+
+  - name: Assegure a escuta do MySQL em todas as portas
+    lineinfile: dest=/etc/mysql/mysql.conf.d/mysqld.cnf regexp=^bind-address line="bind-address = {{ ansible_eth0.ipv4.address }}"
+    notify: restart mysql
+
+  - name: Iniciando MySQL
+    service: name=mysql state=started enabled=yes
+    
+  - name: Criando database demo
+    mysql_db: name={{ db_name }} state=present
+
+  - name: Criando usuário demo
+    mysql_user: name={{ db_user }} password={{ db_password }} priv={{ db_name }}.*:ALL host='{{ db_user_host }}' state=present

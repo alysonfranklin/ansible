@@ -1,0 +1,12 @@
+[loadbalancer]
+3.89.143.9 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/alyson/.ssh/nginx.pem ansible_python_interpreter=/usr/bin/python3
+
+[webserver]
+54.173.106.238 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/alyson/.ssh/nginx.pem ansible_python_interpreter=/usr/bin/python3
+52.87.226.25 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/alyson/.ssh/nginx.pem ansible_python_interpreter=/usr/bin/python3
+
+[database]
+3.86.220.124 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/alyson/.ssh/nginx.pem ansible_python_interpreter=/usr/bin/python3
+
+[control]
+control ansible_connection=local

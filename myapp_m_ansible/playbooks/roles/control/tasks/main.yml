@@ -1,0 +1,7 @@
+---
+  - name: Instalando curl e python-httplib2
+    pacman: 
+      name: curl, python-httplib2
+      state: latest
+      
+# Eu uso Manjaro na minha maquina pessoal (local), por este motivo o gerenciador de pacotes é o Pacman

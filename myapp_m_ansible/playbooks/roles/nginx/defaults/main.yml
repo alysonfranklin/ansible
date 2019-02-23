@@ -1,0 +1,10 @@
+---
+sites:
+  myapp:
+    frontend: 80
+    backend: 80
+
+# Dicionário - Hash
+# A variável item.key recebe myapp como valor
+# As variáveis item.value.backend e item.value.frontend recebem a porta
+# Percorrendo os elementos de um hash usando with_dict

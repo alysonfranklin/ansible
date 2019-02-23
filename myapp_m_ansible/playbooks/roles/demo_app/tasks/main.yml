@@ -1,0 +1,30 @@
+---
+  - name: Instalando Apache2 e componentes do webserver
+    apt:
+      name: [python-pip, python-virtualenv, python3-mysqldb,  python-mysqldb]
+      state: latest
+
+  - name: Copiar fonte do aplicativo de demonstração
+    copy: src=./demo/app/ dest=/var/www/demo mode=0755
+    notify: restart apache2
+
+  - name: Copiar demo.wsgi
+    template: src=demo.wsgi.j2 dest=/var/www/demo/demo.wsgi mode=0755
+    notify: restart apache2
+
+  - name: Copiar configuração do virtualhost do apache
+    copy: src=./demo/demo.conf dest=/etc/apache2/sites-available mode=0755
+    notify: restart apache2
+
+  - name: Configurando python virtualenv
+    pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.venv
+    notify: restart apache2
+    
+  - name: Instalando requisitos do Python
+    command: pip install -r /var/www/demo/requirements.txt
+    notify: restart apache2
+  
+
+  - name: Ativar o site de demonstração
+    file: src=/etc/apache2/sites-available/demo.conf dest=/etc/apache2/sites-enabled/demo.conf state=link
+    notify: restart apache2
