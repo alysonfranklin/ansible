@@ -86,14 +86,33 @@ Todos os facts possíveis começam com ansible_ e estão disponíveis globalment
 ![image](https://user-images.githubusercontent.com/34744444/51430272-f6a30500-1bff-11e9-8d40-a00f99fb4679.png)
 
 
-OBS: É importante notar que arquivos “yml” são indentados com espaços e nunca com TABS. Vai salvar seu tempo.
+OBS: É importante notar que arquivos “yml” são indentados com espaços e nunca com TABS. Vai salvar seu tempo.\
 
-## Nota final ##
-Todos os meus playbooks serão hospedados neste repositório. 
-Começarei com algo básico, como algum playbook que criei para configurar minha maquina pessoal. 
 
-Para executar o playbook é simples. Basta executar a seguinte instrução:
-ansible-playbook playbook.yml -i arquivo_hosts -e "distro=ubuntu".\
-Ou: ansible-playbook playbook.yml -i arquivo_hosts all
+### Alguns comandos do ansible ###
 
-Fiquem a vontade para fazer pull requests, criticar, elogiar... Enfim, espero que gostem. 
+##### Para criptofrar variaveis no ansible, use ansible-vault. #####
+$ ansible-vault create vault
+
+
+##### Add a seguinte linha no arquivo: vault_db_password: alyson #####
+##### A variável vault_db_password será criptofada e receberá o valor "alyson" #####
+
+##### Para editar suas variáveis criptofadas #####
+$ ansible-vault edit vault
+
+##### Para executar o playbook com ansible-vault #####
+$ ansible-playbook playbook.yml --ask-vault-pass
+
+##### O ansible pergunta com (Y/N/C) quais tarefas você deseja executar #####
+$ ansible-playbook playbook.yml --step
+
+##### Listando tags #####
+ansible-playbook playbooks/full.yml --list-tags
+
+##### Executa a task pela descrição. #####
+##### OBS: O Ansible irá executar a task daí pra frente. #####
+ansible-playbook playbooks/full.yml --start-at-task "Copiar demo.wsgi"
+
+##### Checando syntax do seu playbook #####
+ansible-playbook playbooks/full.yml --syntax-check
