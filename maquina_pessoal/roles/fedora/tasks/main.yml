@@ -1,0 +1,256 @@
+---
+
+  - name: Instalando libselinux-python no Fedora
+    dnf:
+      name: libselinux-python
+      state: latest
+    tags: selinux
+
+
+  - name: Repo Fusion
+    shell: dnf install "{{ repo_fusion }}"
+    args:
+      warn: false
+    tags: repo_fusion
+
+
+  - name: Instalando Gparted no Fedora
+    dnf:
+      name: gparted
+      state: latest
+    tags: install_gparted
+
+  - name: Instalando Google Chrome no Fedora
+    dnf:
+      name: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+      state: present
+    tags: install_chrome
+
+  - name: Adicionando repositório Spotify no Fedora
+    shell: dnf config-manager --add-repo=http://negativo17.org/repos/fedora-spotify.repo
+    args:
+      warn: false
+    register: repo_spotify
+    tags: repo_spotify
+
+
+  - name: Instalando Spotify no Fedora
+    dnf:
+      name: spotify-client
+      state: latest
+    tags: install_spotify
+
+
+  - name: Instalando Qbittorrent no Fedora
+    dnf:
+      name: qbittorrent
+      state: latest
+    tags: install_qbittorrent
+
+
+  - name: Importando key do repositório Opera no Fedora
+    rpm_key:
+      state: present
+      key: https://rpm.opera.com/rpmrepo.key
+    register: key_opera
+    tags: key_opera
+
+
+  - name: Adicionando repositório do Opera no Fedora
+    yum_repository:
+      name: opera
+      description: Opera
+      baseurl: https://rpm.opera.com/rpm
+      gpgcheck: yes
+      enabled: yes
+    when: key_opera is success
+    register: repo_opera
+    tags: repo_opera
+
+
+  - name: Instalando Opera no Fedora
+    dnf:
+      name: opera-stable
+      state: latest
+    when: repo_opera is success
+    tags: install_opera
+
+
+  - name: Importando key VsCode no Fedora
+    command: rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    register: key_vscode
+    tags: key_vscode
+
+
+  - name: Adicionando repositório do VsCode no Fedora
+    command: rm -rf /etc/yum.repos.d/vscode.repo
+    command: sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+    when: key_vscode is success
+    register: repo_vscode
+    tags: repo_vscode
+
+  - name: Instalando VsCode no Fedora
+    dnf:
+      name: code
+      state: latest
+    when: repo_vscode is success
+    tags: install_vscode_fedora
+
+  
+
+  - name: Instalando TeamViewer - No Fedora
+    dnf:
+      name: https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
+      state: present
+    tags: install_teamviewer
+
+
+  - name: Instalando vim, git, curl e tmux no Fedora
+    dnf:
+      name: [vim, git, curl, tmux]
+      state: latest
+    register: pacotes_principais
+    tags: pacotes_principais
+
+
+  - name: Configurando tmux.conf
+    get_url:
+      url: https://bitbucket.org/alysonfranklin/meulinux/raw/769832ba67072d33c7e189622a94b9ba930fe141/home/.tmux.conf
+      dest: ~alyson
+      mode: 0644
+      owner: alyson
+      group: alyson
+    tags: tmux
+
+
+  - name: Importando key GPG do Sublime-Text no Fedora
+    rpm_key:
+      state: present
+      key: https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+    tags: key_sublim
+
+  - name: Adicionando repositorio do sublime-text no Fedora
+    command: dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+    tags: repo_sublimetext
+
+
+  - name: Instalando sublime-text no Fedora
+    dnf:
+      name: sublime-text
+      state: latest
+    tags: install_sublimetext
+
+
+  - name: Instalando plugin dnf-plugins-core no Fedora
+    dnf:
+      name: dnf-plugins-core
+      state: latest
+    tags: install_plugincore
+
+
+  - name: Adicionando repositorio Docker no Fedora
+    command: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+    tags: repo_docker
+
+
+  - name: Instalando Docker-ce no Fedora
+    dnf:
+      name: docker-ce
+      state: latest
+    tags: install_docker
+
+
+  - name: Adicionando key do repositorio do VirtualBox no Fedora
+    rpm_key:
+      state: present
+      key: https://www.virtualbox.org/download/oracle_vbox.asc
+    tags: key_virtualbox
+
+  - name: Instalando VirtualBox no Fedora
+    dnf:
+      name: https://download.virtualbox.org/virtualbox/6.0.0/VirtualBox-6.0-6.0.0_127566_fedora26-1.x86_64.rpm
+      state: present
+    tags: install_virtualbox
+
+
+  - name: Instalando AWSCli no Fedora
+    dnf:
+      name: awscli
+      state: latest
+    tags: install_awscli
+
+
+  - name: Instalando ZSH no Fedora
+    dnf:
+      name: zsh
+      state: latest                                   
+    tags: install_zsh
+
+  - name: Baixando Oh-My-Zsh
+    get_url:
+      url: https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh
+      dest: /tmp/zsh.sh
+      mode: 0755
+    register: down_zsh
+    when: install_zsh is success
+    tags: down_zsh
+
+  - name: Instalando Oh-My-Zsh
+    shell: wget --no-check-certificate http://install.ohmyz.sh -O - | sh
+    remote_user: alyson
+    tags: zsh
+
+  - name: Configurando ZSH
+    shell: rm -rf ~alyson/.zshrc ; wget https://bitbucket.org/alysonfranklin/meulinux/raw/b24e1e79744ba5a18e945133bdfe737ece023dd5/home/.zshrc && chown alyson. ~alyson/.zshrc 
+    args:
+      chdir: ~alyson
+    tags: zsh_config
+
+  - name: Configurando Git -> .gitconfig
+    shell: wget https://bitbucket.org/alysonfranklin/meulinux/raw/b24e1e79744ba5a18e945133bdfe737ece023dd5/home/.gitconfig
+    args:
+      chdir: ~alyson
+    tags: git_config
+
+
+  - name: Instalando Vagrant no Fedora
+    dnf:
+      name: https://releases.hashicorp.com/vagrant/2.2.3/vagrant_2.2.3_x86_64.rpm
+      state: present
+    tags: install_vagrant
+
+
+  - name: Instalando NeoVim no Fedora
+    dnf:
+      name: neovim
+      state: latest
+    tags: install_neovim
+
+  - name: Setando NeoVim como editor padrão
+    alternatives:
+      name: vim
+      path: /usr/bin/nvim
+    when: install_neovim == 'result is succeeded'
+    tags: set_neovim
+
+  - name: Criando diretório ~alyson/.config/
+    file:
+      path: ~alyson/.config/
+      state: directory
+      owner: alyson
+      group: alyson
+    tags: create_dir_neovim
+
+  - name: Baixando configuração do NeoVim
+    command: rm -rf ~alyson/.config/neovim
+    command: 'git clone --recursive https://alysonfranklin@bitbucket.org/alysonfranklin/neovim.git'
+    args:  
+      chdir: ~alyson/.config/
+    register: down_neovim
+    tags: down_neovim
+
+  - name: Forçando reconfiguração do NeoVim
+    command: mv -v ~alyson/.config/neovim/nvim ~alyson/.config/
+    command: rm -rf ~alyson/.config/neovim/
+    command: pip3 install --upgrade --force-reinstall neovim
+    tags: reconfig_neovim

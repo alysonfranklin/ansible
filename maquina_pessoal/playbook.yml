@@ -1,6 +1,42 @@
 ---
-- hosts: "{{ distro }}"
+- name: Usando função de acordo com a distribuição
+  hosts: localhost
   become: true
-  roles:
-    - ubuntu
-    - centos
+
+  tasks:
+    - name: Executando tarefa na distro baseada em Ubuntu/Debian
+      include_role:
+         name: ubuntu
+      tags: always
+      when: ansible_os_family == "Debian"
+
+    - name: Executando tarefa na distro baseada em CentOS/RHEL
+      include_role:
+         name: fedora
+      tags: always
+      when: ansible_distribution == "CentOS"      
+
+
+
+# Usando essa forma as tags funcionam, porém, o when deixa de funcionar
+#- name: test playbook
+#  hosts: localhost
+#  tasks:
+#    - include: roles/ubuntu/tasks/main.yml
+#  when: ansible_os_family == "Debian"
+
+# Usando esta forma o when funciona, mas as tags não.
+#- name: Setup and use a role
+#  hosts: localhost
+#  become: true
+#
+#  tasks:
+#    - name: Executando tarefa na distribuição baseada em Debian/Ubuntu
+#      include_role:
+#        name: ubuntu
+#      when: ansible_os_family == "Debian"
+#
+#    - name: Executando tarefa na distribuição baseada em CentOS/RHEL
+#      include_role:
+#        name: fedora
+#      when: ansible_distribution == "Fedora"

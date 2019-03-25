@@ -6,37 +6,12 @@
       update_cache: yes
       state: latest
     register: apt_https
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     tags: apt_https
-
-
-  - name: Adicionando repositório do TeamViewer - Distros Debian/Ubuntu
-    apt_repository:
-      repo: deb http://linux.teamviewer.com/deb stable main stable non-free
-      state: present
-      filename: teamviewer
-      update_cache: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and apt_https is success
-    register: repo_teamviewer
-    tags: repo_teamviewer
-
-
-  - name: Adicionando key para o repositório do TeamViewer - Distros Debian/Ubuntu
-    apt_key:
-      url: "{{ key_teamviewer }}"
-      state: present
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-    ignore_errors: true
 
 
   - name: Instalando TeamViewer - Distros Ubuntu/Debian
     apt:
-      name: teamviewer
-      state: latest
-      update_cache: yes
-      force: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and repo_teamviewer is success
-    tags: install_teamviewer
+      deb: "{{ teamviewer }}"
 
 
   - name: Instalando vim, git, curl, tmux & software-properties-common - Distros Debian/Ubuntu
@@ -44,7 +19,6 @@
       name: [vim, git, curl, software-properties-common, tmux, zip, unzip, rar, unrar]
       state: latest
     tags: pacotes_essenciais
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Configurando tmux.conf
@@ -61,7 +35,6 @@
     apt_key:
       url: https://download.sublimetext.com/sublimehq-pub.gpg
       state: present
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     ignore_errors: true
 
 
@@ -71,7 +44,6 @@
       filename: sublime_text
       state: present
     register: sublime_text
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Instalando Sublime-Text - Distros Debian/Ubuntu
@@ -80,7 +52,7 @@
       state: latest
       force: yes
       update_cache: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and sublime_text is success
+    when: sublime_text is success
     tags: install_sublime_text
 
 
@@ -90,7 +62,6 @@
       dest: /tmp/chefdk.sh
       mode: 0755
     register: script_chefdk
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     ignore_errors: true
 
 
@@ -98,7 +69,7 @@
     command: ./chefdk.sh
     args:
       chdir: /tmp/
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and script_chefdk is success
+    when: script_chefdk is success
     register: install_chef
     tags: install_chef
     ignore_errors: true
@@ -108,7 +79,7 @@
     file:
       path: /tmp/chefdk.sh
       state: absent
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and install_chef is success
+    when: install_chef is success
 
 
   - name: Baixando script do Docker - Distros Debian/Ubuntu
@@ -118,13 +89,12 @@
       mode: 0755
     register: script_docker
     tags: script_docker
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     ignore_errors: true
 
 
   - name: Instalando Docker - Distros Debian/Ubuntu
     command: /tmp/docker.sh
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and script_docker is success
+    when: script_docker is success
     register: install_docker
     tags: install_docker
     ignore_errors: true
@@ -134,7 +104,7 @@
     file:
       path: /tmp/docker.sh
       state: absent
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and install_docker is success
+    when: install_docker is success
     tags: remove_script_docker
 
 
@@ -144,14 +114,13 @@
       filename: virtualbox
       state: present
     register: repo_virtualbox
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Adicionando key do VirtualBox - Distros Debian/Ubuntu
     apt_key:
-      url: https://www.virtualbox.org/download/oracle_vbox.asc
+      url: "{{ key_virtualbox }}"
       state: present
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and repo_virtualbox is success
+    when: repo_virtualbox is success
     ignore_errors: true
 
 
@@ -162,7 +131,6 @@
       update_cache: yes
       force: yes
     tags: install_virtualbox
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Instalando AWSCLI - Distros Debian/Ubuntu
@@ -171,7 +139,6 @@
       state: latest
       force: yes
     tags: install_awscli
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Adicionando repositório Remmina - Distros Debian/Ubuntu
@@ -180,7 +147,6 @@
       state: present
       filename: remmina
     register: repo_remmina
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     ignore_errors: true
 
 
@@ -190,7 +156,7 @@
       state: latest
       update_cache: yes
       force: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and repo_remmina is success
+    when: repo_remmina is success
     ignore_errors: true
     tags: install_remmina
 
@@ -201,7 +167,6 @@
       state: latest
     register: install_zsh
     tags: install_zsh
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Instalando Oh-My-Zsh
@@ -209,7 +174,7 @@
     args:
       chdir: ~alyson
       warn: false
-    when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu" and install_zsh is success
+    when: install_zsh is success
     tags: zsh
     become_user: alyson
     become: true
@@ -240,7 +205,6 @@
       state: present
     tags: key_vagrant
     register: addkey_vagrant
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     ignore_errors: true
 
 
@@ -251,14 +215,14 @@
       state: present
     tags: repo_vagrant
     register: addrepo_vagrant
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 
   - name: Instalando Vagrant - Distros Debian/Ubuntu
     apt:
       name: vagrant
       state: latest
       update_cache: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and addrepo_vagrant is success
+    when: addrepo_vagrant is success
     tags: install_vagrant
 
 
@@ -269,7 +233,6 @@
       filename: neovim
     register: repo_neovim
     tags: repo_neovim
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Instalando NeoVim e Pré-requisitos do mesmo - Distros Debian/Ubuntu
@@ -279,7 +242,7 @@
       update_cache: yes
       force: yes
     register: install_neovim
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and repo_neovim is success
+    when: repo_neovim is success
     tags: install_neovim
 
 
@@ -287,7 +250,7 @@
     alternatives:
       name: vim
       path: /usr/bin/nvim
-    when: install_neovim == 'result is succeeded' and ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    when: install_neovim == 'result is succeeded'
     tags: set_neovim
     ignore_errors: true
 
@@ -316,7 +279,6 @@
     apt_key:
       keyserver: hkp://keyserver.ubuntu.com:80
       id: 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
   
   - name: Adicionando repositório Spotify - Distros Debian/Ubuntu
@@ -325,7 +287,6 @@
       state: present
       filename: spotify
     register: repo_spotify
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 
   - name: Instalando Spotify - Distros Debian/Ubuntu
@@ -334,13 +295,12 @@
       state: latest
       update_cache: yes
       force: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' and repo_spotify is success
+    when: repo_spotify is success
 
   - name: Instalando GParted - Distros Debian/Ubuntu
     apt:
       name: gparted
       state: latest
-    when: ansible_distribution == 'Debian' or ansible_distribution == "Ubuntu"
     tags: install_gparted
 
   - name: Baixando Terraform - Distros Debian/Ubuntu
@@ -354,5 +314,27 @@
       src: /tmp/terraform.zip
       dest: /usr/local/bin/
       remote_src: yes
-    when: ansible_distribution == 'Debian' or ansible_distribution == "Ubuntu"
     tags: install_terraform
+
+  - name: Instalando Google Chrome
+    apt:
+      deb: "{{ chrome }}"
+    tags: chrome
+
+  - name: Instalando Qbittorrent
+    apt:
+      name: qbittorrent
+      state: latest
+
+  - name: Instalando VsCode
+    apt:
+      deb: "{{ vscode }}"
+    tags: vscode
+
+
+  - name: Add usuário ao grupo vboxusers e docker e definindo /bin/zsh como padrão
+    user:
+      name: alyson
+      shell: /bin/zsh
+      groups: vboxusers,docker
+      append: yes
