@@ -16,3 +16,5 @@ down_terraform: https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.
 # Variáveis Fedora
 repo_fusion: https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
 repo_fusion2: https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+chrome_fedora: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+teamviewer_fedora: https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm

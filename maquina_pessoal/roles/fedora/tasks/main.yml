@@ -22,7 +22,7 @@
 
   - name: Instalando Google Chrome no Fedora
     dnf:
-      name: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+      name: "{{ chrome_fedora }}"
       state: present
     tags: install_chrome
 
@@ -100,7 +100,7 @@
 
   - name: Instalando TeamViewer - No Fedora
     dnf:
-      name: https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
+      name: "{{ teamviewer_fedora }}"
       state: present
     tags: install_teamviewer
 
@@ -115,12 +115,12 @@
 
   - name: Configurando tmux.conf
     get_url:
-      url: https://bitbucket.org/alysonfranklin/meulinux/raw/769832ba67072d33c7e189622a94b9ba930fe141/home/.tmux.conf
+      url: "{{ tmux_conf }}"
       dest: ~alyson
       mode: 0644
       owner: alyson
       group: alyson
-    tags: tmux
+    tags: tmux_conf
 
 
   - name: Importando key GPG do Sublime-Text no Fedora
