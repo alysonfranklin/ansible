@@ -204,7 +204,7 @@
     args:
       chdir: ~alyson
       warn: false
-    when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existis, ele vai executar essa task
+    when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existir, ele vai executar a task
     tags: zsh
     become_user: alyson
     become: true

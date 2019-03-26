@@ -178,7 +178,7 @@
 
   - name: Instalando VirtualBox no Fedora
     dnf:
-      name: https://download.virtualbox.org/virtualbox/6.0.0/VirtualBox-6.0-6.0.0_127566_fedora26-1.x86_64.rpm
+      name: "{{ virtualbox_fedora }}"
       state: present
     tags: install_virtualbox
 
@@ -196,41 +196,50 @@
       state: latest                                   
     tags: install_zsh
 
-  - name: Baixando Oh-My-Zsh
-    get_url:
-      url: https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh
-      dest: /tmp/zsh.sh
-      mode: 0755
-    register: down_zsh
-    when: install_zsh is success
-    tags: down_zsh
 
-  - name: Instalando Oh-My-Zsh
-    shell: wget --no-check-certificate http://install.ohmyz.sh -O - | sh
+  - name: Checando se Oh-My-Zsh existe
+    stat:
+      path: ~alyson/.oh-my-zsh
     remote_user: alyson
+    register: check_ohmyzsh
+    tags: check_ohmyzsh
+
+
+  - name: Baixando Oh-My-Zsh
+    shell: wget --no-check-certificate http://install.ohmyz.sh -O - | sh
+    args:
+      chdir: ~alyson
+      warn: false
+    when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existir, ele vai executar a task
     tags: zsh
+    become_user: alyson
+    become: true
 
   - name: Configurando ZSH
-    shell: rm -rf ~alyson/.zshrc ; wget https://bitbucket.org/alysonfranklin/meulinux/raw/b24e1e79744ba5a18e945133bdfe737ece023dd5/home/.zshrc && chown alyson. ~alyson/.zshrc 
+    shell: rm -rf .zshrc ; wget "{{ zsh_config }}" && chown alyson. .zshrc 
     args:
       chdir: ~alyson
+      warn: false
     tags: zsh_config
 
-  - name: Configurando Git -> .gitconfig
-    shell: wget https://bitbucket.org/alysonfranklin/meulinux/raw/b24e1e79744ba5a18e945133bdfe737ece023dd5/home/.gitconfig
-    args:
-      chdir: ~alyson
+  - name: Configurando Git Config
+    get_url: 
+      url: "{{ git_config }}"
+      dest: ~alyson
+      owner: alyson
+      group: alyson
+      mode: 6444
     tags: git_config
 
 
-  - name: Instalando Vagrant no Fedora
+  - name: Instalando Vagrant
     dnf:
-      name: https://releases.hashicorp.com/vagrant/2.2.3/vagrant_2.2.3_x86_64.rpm
+      name: "{{ vagrant_fedora }}"
       state: present
     tags: install_vagrant
 
 
-  - name: Instalando NeoVim no Fedora
+  - name: Instalando NeoVim
     dnf:
       name: neovim
       state: latest
