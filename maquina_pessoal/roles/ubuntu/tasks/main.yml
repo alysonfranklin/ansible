@@ -23,12 +23,21 @@
 
   - name: Configurando tmux.conf
     get_url:
-      url: "{{ config_tmux }}"
+      url: "{{ tmux_conf }}"
       dest: ~alyson
       mode: 0644
       owner: alyson
       group: alyson
-    tags: tmux
+    tags: tmux_conf
+
+  - name: Configurando tmux.conf.local
+    get_url:
+      url: "{{ tmux_conf_local }}"
+      dest: ~alyson
+      mode: 0644
+      owner: alyson
+      group: alyson
+    tags: tmux_conf_local
 
 
   - name: Adicionando key GPG do Sublime-Text - Distros Debian/Ubuntu
@@ -55,21 +64,28 @@
     when: sublime_text is success
     tags: install_sublime_text
 
+  - name: Verificando se o chefDK existe
+    command: chef-apply --version
+    register: chefdk_command
+    tags: chefdk_command
+    ignore_errors: true
 
   - name: Baixando script do ChefDK - Distros Debian/Ubuntu
     get_url: 
       url: https://omnitruck.chef.io/install.sh
       dest: /tmp/chefdk.sh
       mode: 0755
+    when: chefdk_command is failed
     register: script_chefdk
     ignore_errors: true
+    tags: script_chefdk
 
 
   - name: Instalando ChefDK - Distros Debian/Ubuntu
     command: ./chefdk.sh
     args:
       chdir: /tmp/
-    when: script_chefdk is success
+    when: script_chefdk == 'result is succeeded'
     register: install_chef
     tags: install_chef
     ignore_errors: true
@@ -81,12 +97,18 @@
       state: absent
     when: install_chef is success
 
+  - name: Verificando se o docker existe
+    command: docker --version
+    register: docker_command
+    tags: docker_command
+    ignore_errors: true
 
   - name: Baixando script do Docker - Distros Debian/Ubuntu
     get_url:
       url: https://get.docker.com
       dest: /tmp/docker.sh
       mode: 0755
+    when: docker_command is failed
     register: script_docker
     tags: script_docker
     ignore_errors: true
@@ -94,7 +116,7 @@
 
   - name: Instalando Docker - Distros Debian/Ubuntu
     command: /tmp/docker.sh
-    when: script_docker is success
+    when: script_docker == 'result is succeeded'
     register: install_docker
     tags: install_docker
     ignore_errors: true
@@ -169,16 +191,23 @@
     tags: install_zsh
 
 
-  - name: Instalando Oh-My-Zsh
+  - name: Checando se Oh-My-Zsh existe
+    stat:
+      path: ~alyson/.oh-my-zsh
+    remote_user: alyson
+    register: check_ohmyzsh
+    tags: check_ohmyzsh
+
+
+  - name: Baixando Oh-My-Zsh
     shell: wget --no-check-certificate http://install.ohmyz.sh -O - | sh
     args:
       chdir: ~alyson
       warn: false
-    when: install_zsh is success
+    when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existis, ele vai executar essa task
     tags: zsh
     become_user: alyson
     become: true
-    ignore_errors: yes
 
 
   - name: Configurando ZSH
