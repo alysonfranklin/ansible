@@ -130,28 +130,9 @@
     tags: remove_script_docker
 
 
-  - name: Adicionando repositório do VirtualBox - Distros Debian/Ubuntu
-    apt_repository:
-      repo: deb https://download.virtualbox.org/virtualbox/debian {{ ansible_distribution_release }} contrib
-      filename: virtualbox
-      state: present
-    register: repo_virtualbox
-
-
-  - name: Adicionando key do VirtualBox - Distros Debian/Ubuntu
-    apt_key:
-      url: "{{ key_virtualbox }}"
-      state: present
-    when: repo_virtualbox is success
-    ignore_errors: true
-
-
-  - name: Instalando {{ virtualbox }} - Distros Debian/Ubuntu
+  - name: Instalando Virtualbox - Distros Debian/Ubuntu
     apt:
-      name: "{{ virtualbox }}"
-      state: latest
-      update_cache: yes
-      force: yes
+      deb: "{{ virtualbox }}"
     tags: install_virtualbox
 
 
@@ -211,10 +192,12 @@
 
 
   - name: Configurando ZSH
-    shell: rm -rf .zshrc ; wget "{{ zsh_config }}" && chown alyson. .zshrc 
-    args:
-      chdir: ~alyson
-      warn: false
+    get_url: 
+      url: "{{ zsh_config }}"
+      dest: ~alyson
+      owner: alyson
+      group: alyson
+      mode: 6444
     tags: zsh_config
 
   - name: Configurando Git Config
