@@ -123,6 +123,16 @@
     tags: tmux_conf
 
 
+  - name: Configurando tmux.conf.local
+    get_url:
+      url: "{{ tmux_conf_local }}"
+      dest: ~alyson
+      mode: 0644
+      owner: alyson
+      group: alyson
+    tags: tmux_conf_local
+
+
   - name: Importando key GPG do Sublime-Text no Fedora
     rpm_key:
       state: present
