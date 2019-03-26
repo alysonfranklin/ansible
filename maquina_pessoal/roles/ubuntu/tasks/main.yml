@@ -144,15 +144,6 @@
     tags: install_awscli
 
 
-  - name: Adicionando repositório Remmina - Distros Debian/Ubuntu
-    apt_repository:
-      repo: ppa:remmina-ppa-team/remmina-next
-      state: present
-      filename: remmina
-    register: repo_remmina
-    ignore_errors: true
-
-
   - name: Instalando Remmina - Distros Debian/Ubuntu
     apt:
       name: [remmina, remmina-plugin-rdp, libfreerdp-plugins-standard]
