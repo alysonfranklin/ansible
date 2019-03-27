@@ -233,6 +233,7 @@
       repo: ppa:neovim-ppa/stable
       state: present
       filename: neovim
+      codename: bionic
     register: repo_neovim
     tags: repo_neovim
 
