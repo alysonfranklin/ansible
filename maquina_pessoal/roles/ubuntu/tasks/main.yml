@@ -149,6 +149,7 @@
       name: [remmina, remmina-plugin-rdp, libfreerdp-plugins-standard]
       state: latest
       update_cache: yes
+      cache_valid_time: 3600
       force: yes
     ignore_errors: true
     tags: install_remmina
@@ -166,6 +167,7 @@
     stat:
       path: ~alyson/.oh-my-zsh
     remote_user: alyson
+    when: install_zsh == 'result is succeeded'
     register: check_ohmyzsh
     tags: check_ohmyzsh
 
@@ -176,9 +178,8 @@
       chdir: ~alyson
       warn: false
     when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existir, ele vai executar a task
-    tags: zsh
+    tags: down_zsh
     become_user: alyson
-    become: true
 
 
   - name: Configurando ZSH
