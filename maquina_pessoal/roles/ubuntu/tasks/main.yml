@@ -150,7 +150,6 @@
       state: latest
       update_cache: yes
       force: yes
-    when: repo_remmina is success
     ignore_errors: true
     tags: install_remmina
 
@@ -306,17 +305,21 @@
       state: latest
     tags: install_gparted
 
-  - name: Baixando Terraform - Distros Debian/Ubuntu
-    get_url:
-      url: "{{ down_terraform }}"
-      dest: /tmp/terraform.zip
-    tags: down_terraform
 
-  - name: Instalando Terraform - Distros Debian/Ubuntu
+  - name: Verificando se o Terraform existe
+    command: terraform --version
+    register: check_terraform
+    ignore_errors: true
+    tags: check_terraform
+
+
+  - name: Baixando e Instalando Terraform
     unarchive:
-      src: /tmp/terraform.zip
-      dest: /usr/local/bin/
+      src: "{{ down_terraform }}"
+      dest: /usr/local/bin
       remote_src: yes
+      mode: 0755
+    when: check_terraform is failed
     tags: install_terraform
 
   - name: Instalando Google Chrome
