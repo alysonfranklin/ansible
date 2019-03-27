@@ -1,0 +1,55 @@
+---
+- hosts: localhost
+  tasks:
+
+- name: Checa se o arquivo/diretório existe
+  stat: 
+    path: /etc/shorewall/rules
+  register: shorewall_rules
+
+- name: Reinicia o shorewall somente se o showrewall_rules existir
+  command: "shorewall restart"
+  when: shorewall_rules.stat.exists == True
+
+# Se você quiser fazer coisas quando um arquivo não está presente, você pode verificar se o resultado é falso, assim:
+- action: example
+  when: stat_result.stat.exists == False
+
+- name: Checando se um arquivo e/ou diretório existe
+  stat:
+    path: /Users/mdtutorials2/Documents/Ansible/prompt.yaml
+    register: file_details
+
+- debug:
+    msg: "O arquivo ou diretório existe"
+  when: file_details.stat.exists
+
+  # O exemplo acima dará a saída se é um arquivo ou diretório ou link simbólico.
+  # Então, como verificar se um determinado objeto existe e não é um diretório ou um link simbólico.
+
+  # Podemos usar o valor de retorno "isreg" para verificar se é um valor de retorno.
+  # Será verdade se o caminho for um arquivo regular.
+- debug:
+    msg: "Ansible file exists example"
+  when: file_details.stat.exists and file_details.stat.isreg
+
+# Outra maneira é combinar os valores de retorno "isdir" e "islnk".
+# A tarefa abaixo mostra como isso pode ser feito.
+- debug:
+    msg: "It is a file"
+  when: file_details.stat.exists and file_details.stat.isdir == false and file_details.stat.islnk == false
+
+
+# Verificando se existe um diretório
+# Para verificar se um determinado objeto é um diretório e também existe, é 
+# possível combinar os valores de retorno "exists" e "isdir". O valor de "isdir" 
+# será verdadeiro se o objeto for um diretório
+
+- name: Ansible check directory exists example.
+  stat:
+    path: /Users/dnpmacpro/Documents/Ansible/test1
+  register: files_to_delete
+
+- debug:
+    msg: "It is a directory"
+  when: files_to_delete.stat.exists and files_to_delete.stat.isdir

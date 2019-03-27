@@ -1,0 +1,38 @@
+---
+# esta é uma demonstração de execuções condicionais usando instruções 'when', que podem pular
+# determinadas tarefas em máquinas / plataformas / etc onde elas não se aplicam.
+
+- hosts: localhost
+  remote_user: root
+
+  vars:
+     favcolor: "red"
+     dog: "fido"
+     cat: "whiskers"
+     ssn: 8675309
+
+  tasks:
+
+     - name: "faça isso se meu favcolor for azul, e meu cachorro tiver o nome de fido"
+       shell: /bin/false
+       when: favcolor == 'blue' and dog == 'fido'
+
+     - name: "faça isso se meu favcolor não for azul, e meu cachorro for chamado de fido"
+       shell: /bin/true
+       when: favcolor != 'blue' and dog == 'fido'
+
+     - name: "faça isso se meu SSN tiver mais de 9000"
+       shell: /bin/true
+       when: ssn > 9000
+
+     - name: "faça isso se eu tiver um desses SSNs"
+       shell: /bin/true
+       when:  ssn in [ 8675309, 8675310, 8675311 ]
+
+     - name: "faça isso se uma variável chamada hipopótamo NÃO estiver definida"
+       shell: /bin/true
+       when: hippo is not defined
+
+     - name: "faça isso se uma variável chamada hipopótamo for definida"
+       shell: /bin/true
+       when: hippo is defined

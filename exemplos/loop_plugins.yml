@@ -1,0 +1,17 @@
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+
+    # Copiando tudo que começa com lib* - with_fileglob
+
+    - file: dest=/tmp/fooapp state=directory
+
+    - copy: src={{ item }} dest=/tmp/fooapp/ owner=alyson mode=600
+      with_fileglob: /home/alyson/Downloads/tor-browser_pt-BR/Browser/lib*
+      register: result
+
+    # Debugando - Mostrar na tela tudo o que está sendo copiado
+    - debug:
+        var: result
+        verbosity: 2

@@ -1,0 +1,26 @@
+---
+# este é um exemplo trivial de como fazer um loop aninhado.
+
+- hosts: localhost
+  tasks:
+    - shell: echo "aninhar test a={{ item[0] }} b={{ item[1] }} c={{ item[2] }}"
+      with_nested:
+        - [ 'red', 'blue', 'green' ]
+        - [ 1, 2, 3 ]
+        - [ 'up', 'down', 'strange']
+
+# você pode referenciar um nome de variável bruto sem colocá-la em {{ chaves }}
+
+- hosts: localhost
+  vars:
+    listvar1:
+    - 'a'
+    - 'b'
+    - 'c'
+
+  tasks:
+    - shell: echo "aninhar test a={{ item[0] }} b={{ item[1] }}"
+      with_nested:
+        - listvar1
+        - [ 1, 2, 3 ]
+

@@ -1,0 +1,42 @@
+---
+# este é um exemplo de como executar elementos de tarefas repetidas em listas
+# de itens, por exemplo, instalando vários pacotes ou configurando
+# vários usuários<Paste>
+
+- hosts: localhost
+
+  tasks:
+
+  - name: Instalando pacotes
+    apt: name={{ item }} state=latest
+    with_items:
+       - htop
+       - curl
+    when: ansible_os_family == "Debian"
+
+  - name: Add multiplos usuários
+    user: name={{ item }} state=present groups=vboxusers
+    with_items:
+       - testuser1
+       - testuser2
+    become: true
+
+  - name: Removendo usuários
+    user: name={{ item }} state=absent
+    with_items:
+        - testuser1
+        - testuser2
+    become: true
+
+    # Fazendo loop no arquivo de inventário, num grupo especifico
+    - shell: echo " {{ item }}" >> teste.txt
+      with_items: "{{groups['multi']}}"
+      tags: teste
+
+  - name: Copiando vários arquivos de .conf
+    template: src={{ item.src }} dest={{ item.dest }}
+    with_items:
+        - src: templates/testsource1
+          dest: /example/dest1/test.conf
+        - src: templates/testsource2
+          dest: /example/dest2/test.conf
