@@ -274,6 +274,7 @@
       recursive: yes
       update: yes
       clone: yes
+      force: yes
     tags: clone_nvim
     ignore_errors: true
 
