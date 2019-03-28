@@ -30,13 +30,13 @@
   # Podemos usar o valor de retorno "isreg" para verificar se é um valor de retorno.
   # Será verdade se o caminho for um arquivo regular.
 - debug:
-    msg: "Ansible file exists example"
+    msg: "O arquivo existe e é um arquivo regular"
   when: file_details.stat.exists and file_details.stat.isreg
 
 # Outra maneira é combinar os valores de retorno "isdir" e "islnk".
 # A tarefa abaixo mostra como isso pode ser feito.
 - debug:
-    msg: "It is a file"
+    msg: "O arquivo existe, não é um diretório e não é um link simbólico"
   when: file_details.stat.exists and file_details.stat.isdir == false and file_details.stat.islnk == false
 
 
@@ -45,11 +45,11 @@
 # possível combinar os valores de retorno "exists" e "isdir". O valor de "isdir" 
 # será verdadeiro se o objeto for um diretório
 
-- name: Ansible check directory exists example.
+- name: Ansible verifica se o diretório existe.
   stat:
     path: /Users/dnpmacpro/Documents/Ansible/test1
   register: files_to_delete
 
 - debug:
-    msg: "It is a directory"
+    msg: "Existe e é um diretório"
   when: files_to_delete.stat.exists and files_to_delete.stat.isdir
