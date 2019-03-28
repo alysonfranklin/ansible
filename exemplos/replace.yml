@@ -1,0 +1,112 @@
+# Existem várias maneiras em que você pode substituir uma determinada palavra, uma linha, 
+# todas as palavras correspondentes a um padrão específico, etc. em Ansible. 
+# Dependendo da situação, podemos usar o módulo Ansible "replace" ou "lineinfile". 
+# Veremos alguns exemplos de como usar esses módulos para obter a saída desejada.
+
+# Podemos facilmente substituir uma palavra por outra usando o módulo "replace".
+# Caso a palavra não exista no arquivo, nenhum erro será lançado. 
+# Apenas retornará o status como não alterado.
+
+# ------------------------------------------------------------------------ #
+
+# Para a tarefa, você precisará ter três parâmetros.
+
+# "path" - você tem que dar a localização do arquivo aqui.
+# "regexp" - esta é a string que você precisa para ser alterada. 
+# Você também pode fornecer expressões regulares do python.
+# "replace" - é aqui que você pode fornecer a palavra de substituição.
+# Este parâmetro não é usado se você quiser apenas remover uma palavra.
+
+# No exemplo a seguir, estou tentando substituir todas as strings "hello" por "world".
+# Observe que é uma operação que diferencia maiúsculas de minúsculas.
+# Por isso, não muda "Hello" (com H maiúsculo).
+
+# A tarefa varrerá todo o arquivo e fará as alterações desejadas.
+
+---
+- hosts: localhost
+  tasks:
+
+  - name: Substitua hello por world
+    replace:
+      path: /tmp/teste.txt
+      regexp: 'hello'
+      replace: "world"
+    tags: replace_one
+
+
+# ------------------------------------------------------------------------ #
+
+
+# Se você precisar fazer uma pesquisa que não diferencia maiúsculas de minúsculas,
+# poderá fazer algo como abaixo. O "i" significa que é uma substituição sensível 
+# a maiúsculas e minúsculas.
+
+  - name: Não diferencia maiúsculas de minúsculas
+    replace:
+      path: /tmp/teste.txt
+      regexp: '(?i)hello'
+      replace: "world"
+    tags: replace_two
+
+
+# ------------------------------------------------------------------------ #
+
+
+# Caso você queira que palavras diferentes sejam substituídas pela 
+# mesma variável, isso também é possível. Você pode usar a declaração
+# "with_items" para isso.
+# A tarefa abaixo digitalizará o arquivo inteiro e substituirá todas
+# as ocorrências de cat, tiger e lion e, em seguida, converterá para a cadeia "dog".
+
+  - name: Substitua todas as cadeias da lista por dog
+    replace:
+      path: /tmp/teste.txt
+      regexp: "{{ item }}"
+      replace: "dog"
+    with_items:
+    - 'cat'
+    - 'tiger'
+    - 'lion'
+    tags: replace_three
+
+
+# ------------------------------------------------------------------------ #
+
+
+# Múltiplas tarefas de substituição em uma tarefa usando with_items.
+# Suponha que você tenha várias tarefas de substituição.
+# Você não precisa de funções separadas para cada uma delas.
+# Você pode usar a instrução with_items para fazer isso de uma só vez.
+# Você precisa dar dicionários no with_items como mostrado no exemplo abaixo.
+# Você precisa especificar o "path", parâmetros "regexp" e "replace" 
+# para cada substituição nos dicionários de loop.
+# A chave nos dicionários pode ser qualquer coisa (verifique o regexp1 dado na tarefa abaixo):
+
+  - name: Substituindo cadeias em dois arquivos diferentes
+    replace:
+      path: "{{ item.path }}"
+      regexp: "{{ item.regexp1 }}"
+      replace: "{{ item.replace }}"
+    with_items:
+      - { path: '/tmp/teste1.txt', regexp1: 'cat', replace: 'dog'}
+      - { path: '/tmp/teste2.txt', regexp1: 'orange', replace: 'apple'}
+    tags: replace_four
+
+
+# ------------------------------------------------------------------------ #
+
+
+# Removendo uma string específica
+# Você pode remover uma string específica não definindo o parâmetro "replace". 
+# Isso apenas removerá a string.
+# Na tarefa abaixo, todas as cadeias "dogs" serão removidas.
+# Se uma linha contiver apenas essa palavra, a própria linha será removida.
+
+  - name: Removendo uma string específica
+    replace:
+      path: "/tmp/teste.txt"
+      regexp: "dogs "
+    tags: replace_five
+
+# ------------------------------------------------------------------------ #
