@@ -201,6 +201,16 @@
     tags: git_config
 
 
+  - name: Configurando ~/user/.ssh/config
+    get_url:
+      url: "{{ config_ssh }}"
+      dest: ~alyson/.ssh/
+      mode: 0644
+      owner: alyson
+      group: alyson
+    tags: config_ssh
+
+
   - name: Adicionando key do repositório Vagrant - Distros Debian/Ubuntu
     apt_key:
       keyserver: pgp.mit.edu

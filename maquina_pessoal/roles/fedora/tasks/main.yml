@@ -201,6 +201,7 @@
     stat:
       path: ~alyson/.oh-my-zsh
     remote_user: alyson
+    when: install_zsh is success
     register: check_ohmyzsh
     tags: check_ohmyzsh
 
@@ -210,16 +211,18 @@
     args:
       chdir: ~alyson
       warn: false
-    when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existir, ele vai executar a task
-    tags: zsh
+    when: not check_ohmyzsh.stat.exists
+    tags: down_zsh
     become_user: alyson
-    become: true
+
 
   - name: Configurando ZSH
-    shell: rm -rf .zshrc ; wget "{{ zsh_config }}" && chown alyson. .zshrc 
-    args:
-      chdir: ~alyson
-      warn: false
+    get_url: 
+      url: "{{ zsh_config }}"
+      dest: ~alyson
+      owner: alyson
+      group: alyson
+      mode: 0644
     tags: zsh_config
 
   - name: Configurando Git Config
@@ -228,8 +231,18 @@
       dest: ~alyson
       owner: alyson
       group: alyson
-      mode: 6444
+      mode: 0644
     tags: git_config
+
+
+  - name: Configurando ~/user/.ssh/config
+    get_url:
+      url: "{{ config_ssh }}"
+      dest: ~alyson/.ssh/
+      mode: 0644
+      owner: alyson
+      group: alyson
+    tags: config_ssh
 
 
   - name: Instalando Vagrant
