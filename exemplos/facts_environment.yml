@@ -1,0 +1,53 @@
+# Fatos ilusórios são informações sobre os sistemas remotos aos quais você se conectou.
+# Ele contém informações como endereços IP, o SO instalado, dispositivos Ethernet,
+# endereço MAC, dados relacionados a hora / data, informações de hardware, etc.
+# Eles são muito úteis para cenários em que você precisa executar operações condicionaisOu você pode apenas exibir algumas informações relacionadas a cada máquina remota, como a quantidade de RAM disponível em cada dispositivo.
+
+# com base no estado das máquinas remotas. Por exemplo, dependendo da versão do sistema
+# operacional usada pelo servidor remoto, você pode instalar as diferentes versões de um pacote.
+# Ou você pode apenas exibir algumas informações relacionadas a cada máquina remota, como a 
+# quantidade de RAM disponível em cada dispositivo.
+
+# Se você quiser ver todas as variáveis ​​capturadas pelo módulo de configuração, você pode usar o seguinte comando.
+# ansible all -m setup
+
+# Exemplos abaixo:
+
+---
+- hosts: localhost
+  tasks:
+
+  - name: mac address
+    debug:
+      msg: "{{ ansible_default_ipv4.macaddress }}"
+    tags: mac_address
+
+  - name: Time
+    debug:
+      msg: "{{ ansible_date_time.time }}"
+    tags: time
+
+  - name: Date
+    debug:
+      msg: "{{ ansible_date_time.date }}"
+    tags: date
+
+  - name: Diretório home
+    debug:
+      msg: "{{ ansible_env.HOME }}"
+    tags: home
+
+  - name: Endereço IP
+    debug:
+      msg: "{{ ansible_default_ipv4.address }}"
+    tags: ip_address
+
+  - name: Hostname
+    debug:
+      msg: "{{ ansible_hostname }}"
+    tags: hostname
+
+  - name: Distribuição
+    debug:
+      msg: "{{ ansible_distribution }}"
+    tags: distribution
