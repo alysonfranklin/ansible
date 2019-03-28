@@ -167,7 +167,7 @@
     stat:
       path: ~alyson/.oh-my-zsh
     remote_user: alyson
-    when: install_zsh == 'result is succeeded'
+    when: install_zsh is success
     register: check_ohmyzsh
     tags: check_ohmyzsh
 
@@ -177,7 +177,7 @@
     args:
       chdir: ~alyson
       warn: false
-    when: not check_ohmyzsh.stat.exists and install_zsh == "result is succeeded" # Se não existir, ele vai executar a task
+    when: not check_ohmyzsh.stat.exists  # Se não existir, ele vai executar a task
     tags: down_zsh
     become_user: alyson
 

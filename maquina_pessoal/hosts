@@ -1,5 +1,5 @@
 [localhost]
-localhost
+localhost ansible_ssh_user=alyson
 
 # Utilizo ansible_python_interpreter para distros ubuntu da AWS, pois não vem
 # com python instalado no caminho /usr/bin/python.
