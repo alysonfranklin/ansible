@@ -270,7 +270,7 @@
 
   - name: Clonando meu repositório do Neovim
     git:
-      repo: "{{ repo_neovim }}"
+      repo: "{{ reponeovim }}"
       dest: ~alyson/.config/nvim
       recursive: yes
       update: yes
