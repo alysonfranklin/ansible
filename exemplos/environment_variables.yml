@@ -1,0 +1,31 @@
+
+---
+- hosts: localhost
+  tasks:
+
+    - name: Imprimindo a variável de ambiente no Ansible
+      debug:
+        msg: "{{ lookup('env','HOME') }}"
+      tags: environment_one
+
+    - name: Múltiplas variáveis ​​de ambiente em uma única tarefa
+      debug:
+        msg: "{{ lookup('env','USER','HOME', 'SHELL') }}"
+      tags: environment_two
+
+    - name: O valor da variável de ambiente SHELL é salvo em uma variável chamada "local_shell".
+      vars:
+        local_shell:  "{{ lookup('env','SHELL') }}"
+      debug:
+        msg: "{{ local_shell }}"
+      tags: environment_three
+
+    - name: Acessando variáveis de ambiente de servidores remotos
+      debug:
+        msg: "{{ ansible_env.HOME }}"
+      tags: environment_four
+
+    - name: Imprimindo todas as variáveis de ambiente
+      debug:
+        msg: "{{ ansible_env }}"
+      tags: environment_five
