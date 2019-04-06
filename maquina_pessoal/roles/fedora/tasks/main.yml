@@ -286,3 +286,9 @@
     command: rm -rf ~alyson/.config/neovim/
     command: pip3 install --upgrade --force-reinstall neovim
     tags: reconfig_neovim
+
+  - name: Instalando Whois
+    dnf:
+      name: whois
+      state: latest
+    tags: whois
