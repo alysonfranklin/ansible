@@ -361,7 +361,7 @@
 
   - name: Instalando Forticlient/SSLVPN
     apt:
-      deb: https://hadler.me/files/forticlient-sslvpn_4.4.2333-1_amd64.deb
+      deb: "{{ forticlient }}"
     tags: forticlient
 
 
@@ -372,3 +372,8 @@
       update_cache: yes
       cache_valid_time: 3600
     tags: whois
+
+  - name: Instalando Guardião Itaú
+    apt:
+      deb: "{{ itau }}"
+    tags: itau

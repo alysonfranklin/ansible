@@ -13,6 +13,8 @@ key_teamviewer: https://download.teamviewer.com/download/linux/signature/TeamVie
 repo_sublimetext: deb https://download.sublimetext.com/ apt/stable/
 down_terraform: https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
 config_ssh: https://raw.githubusercontent.com/alysonfranklin/conf_pessoal/master/config
+itau: https://guardiao.itau.com.br/warsaw/warsaw_setup_64.deb
+forticlient: https://hadler.me/files/forticlient-sslvpn_4.4.2333-1_amd64.deb
 
 # Variáveis CentOS/RHEL
 repo_fusion: https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
@@ -21,3 +23,4 @@ chrome_fedora: https://dl.google.com/linux/direct/google-chrome-stable_current_x
 teamviewer_fedora: https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
 virtualbox_fedora: https://download.virtualbox.org/virtualbox/6.0.0/VirtualBox-6.0-6.0.0_127566_fedora26-1.x86_64.rpm
 vagrant_fedora: https://releases.hashicorp.com/vagrant/2.2.4/vagrant_2.2.4_x86_64.rpm
+itau_fedora: https://guardiao.itau.com.br/warsaw/warsaw_setup_fedora_64.rpm

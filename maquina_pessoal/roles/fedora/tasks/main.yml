@@ -292,3 +292,9 @@
       name: whois
       state: latest
     tags: whois
+
+  - name: Instalando Guardião Itaú
+    dnf:
+      name: "{{ itau_fedora }}"
+    tags: itau
+
