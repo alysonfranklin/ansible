@@ -36,3 +36,17 @@
      - name: "faça isso se uma variável chamada hipopótamo for definida"
        shell: /bin/true
        when: hippo is defined
+
+
+     - name: Verifique se o aplicativo está instalado e na versão esperada
+       command: /usr/local/app/bin/app --version
+       register: version_check
+       ignore_errors: True
+       changed_when: "version_check.rc != 0 or target_version not in version_check.stdout"
+      
+     - name: include app install
+       include: tasks/install.yml
+       when: "version_check.rc != 0 or {{ target_version }} not in version_check.stdout"
+# ^^ Eu defini a versão de target_version no defaults/main.yml da minha role:
+# ---
+# target_version: "2.5.2"
