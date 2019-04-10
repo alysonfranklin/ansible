@@ -8,7 +8,7 @@
         msg: "{{ lookup('env','HOME') }}"
       tags: environment_one
 
-    - name: Múltiplas variáveis ​​de ambiente em uma única tarefa
+    - name: Múltiplas variáveis de ambiente em uma única tarefa
       debug:
         msg: "{{ lookup('env','USER','HOME', 'SHELL') }}"
       tags: environment_two
