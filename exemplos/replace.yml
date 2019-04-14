@@ -1,3 +1,5 @@
+---
+
 # Existem várias maneiras em que você pode substituir uma determinada palavra, uma linha, 
 # todas as palavras correspondentes a um padrão específico, etc. em Ansible. 
 # Dependendo da situação, podemos usar o módulo Ansible "replace" ou "lineinfile". 
@@ -23,8 +25,8 @@
 
 # A tarefa varrerá todo o arquivo e fará as alterações desejadas.
 
----
 - hosts: localhost
+  gather_facts: false
   tasks:
 
   - name: Substitua hello por world
@@ -110,3 +112,40 @@
     tags: replace_five
 
 # ------------------------------------------------------------------------ #
+
+# insertbefore - Deve ser definido como BOF para garantir que a linha
+# seja adicionada no começo. Se o padrão já existir, ele não será adicionado.
+# Então, a execução novamente não adicionará mais linhas.
+  - name: Adicionando linha ao topo do arquivo
+    lineinfile:
+      path: /tmp/teste.txt
+      line: 'Linha 1 adicionada'
+      insertbefore: BOF
+    tags: replace_six
+
+# ------------------------------------------------------------------------ #
+
+  - name: Adicionando linha ao final do arquivo
+    lineinfile:
+      path: /tmp/teste.txt
+      line: 'Linha adicionada ao fim do arquivo'
+    tags: replace_seven
+
+# ------------------------------------------------------------------------ #
+
+  - name: Adicionando o alias 'll=ls - lhA' após a última ocorrência do padrão alias
+    lineinfile:
+      path: ~/.bashrc
+      line: alias ll='ls -lhA'
+      insertafter: ^alias.*
+    tags: replace_eight
+
+# ------------------------------------------------------------------------ #
+
+  - name: Add linha antes de .*domain.com / Caso não exista domain.com, a linha será add ao final do arquivo
+    lineinfile:
+      path: /etc/hosts
+      line: '0.0.0.0 facebook.com'
+      insertbefore: .*domain.com
+    become: true
+    tags: replace_nine
