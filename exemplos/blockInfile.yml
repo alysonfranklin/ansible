@@ -1,0 +1,136 @@
+---
+- hosts: localhost
+  gather_facts: false
+  tasks:
+
+# Módulo blockinfile Ansible é usado para inserir / atualizar / remover um 
+# bloco de linhas. O bloco será cercado por um marcador, como início e 
+# fim, para tornar a tarefa idempotente.
+
+# Para inserir um bloco de linhas, no mínimo, você precisa dar o caminho
+# do arquivo e um bloco de linhas.
+
+# Aqui estou tentando inserir o bloco de duas linhas no arquivo /tmp/teste.txt.
+# O parâmetro de destino define o caminho do arquivo remoto e o parâmetro de
+# bloco define o bloco de linhas.
+
+  - name: Adicionando multiplas linhas
+    blockinfile:
+      path: /tmp/teste.txt
+      block: | # Adicionei o Pipe '|' pra ter quebra de linhas
+        - Esta linha foi adicionada pelo módulo blockinfile
+        - Mais uma linha adicionada pelo módulo blockinfile
+      backup: yes
+    tags: block_one
+
+# Observações: 
+
+# 1. Por padrão, o bloco será inserido no final do arquivo.
+# 2. ‘|’ é o caractere de bloco literal em YAML.
+# 3. Use o parâmetro de backup para criar um arquivo de backup se algo for alterado.
+# Pode ajudar se alguma falha aconteceu. O arquivo de backup inclui o registro de
+# data e hora.
+
+# 4. Note que, acima e abaixo do bloco inserido, há um marcador "# BEGIN / END ANSIBLE MANAGED BLOCK".
+# Isso garante que, nas execuções subseqüentes, o bloco não será inserido novamente.
+# Você pode ter vários blocos gerenciados usando marcação diferente. 
+
+# 5. Você pode personalizar a linha do marcador. Isso é útil quando você
+# precisa controlar vários blocos no mesmo arquivo. As linhas de marcação 
+# únicas garantirão que cada operação de blockinfile altere apenas os blocos pretendidos.
+# Ou talvez "#" não seja o caractere de comentário no arquivo específico que você precisa alterar.
+
+# ------------------------------------------------------------------------ #
+
+# Você pode personalizar a linha do marcador como abaixo.
+
+  - name: Updating a line using Ansible blockinfile module
+    blockinfile:
+      path: /tmp/teste.txt
+      marker: <!-- {mark} Add Endereço IP -->
+      block: |
+        - 192.168.0.1
+        - Mais uma linha adicionada pelo módulo blockinfile
+    tags: block_two
+# marker: "<!-- {mark} Add Endereço IP -->"
+# Isso adicionará o marcador "BEGIN Add Endereço IP" e 
+# "End Add Endereço IP" ao bloco. Você também pode alterar o "{mark}".
+
+# ------------------------------------------------------------------------ #
+
+# Você pode remover um bloco escolhendo a opção ausente para o parâmetro state.
+  - name: Removendo linha(s) usando o blockinfile
+    blockinfile:
+      path: /tmp/teste.txt
+      marker: <!-- {mark} Add Endereço IP -->
+      state: absent
+    tags: block_three
+
+# ------------------------------------------------------------------------ #
+
+# Adicionando o bloco após / antes de um padrão particular usando o Regex.
+# Por padrão, o bloco será inserido no EOF. Mas podemos controlar onde inserir
+# usando Regex. Você pode inserir abaixo de um padrão usando o parâmetro insertafter
+# ou acima de uma linha usando o parâmetro insertbefore.
+
+  - name: Adicionando linhas antes da linha que começa com "teste blockinfile"
+    blockinfile:
+      path: /tmp/teste.txt
+      block: |
+        Line inserted using Regex
+        Ansible blockinfile module
+      insertbefore: "^teste blockinfile"
+    tags: block_four
+
+# Observações: 
+# 1. Se o mesmo padrão ocorrer várias vezes, a última correspondência será obtida.
+# 2. Você pode inserir no início do arquivo usando insertbefore: BOF
+
+# ------------------------------------------------------------------------ #
+
+# Você pode adicionar variáveis ​​nos blocos apenas colocando a variável dentro de {{}}.
+# O exemplo a seguir substituirá a variável "var1" pelo valor antes de modificar o arquivo remoto.
+
+  - name: Add variaveis nos blocos
+    blockinfile:
+      path: /tmp/teste.txt
+      marker: <!-- {mark} substituir variavel -->
+      block: |
+        hello {{ var1 }}
+    tags: block_five
+
+# ------------------------------------------------------------------------ #
+
+# Adicionando vários blocos usando with_items
+# Podemos adicionar vários blocos em um arquivo usando blockinfile e with_items.
+# Mas um dos erros comuns que as pessoas cometem é não usar um marcador único.
+# Se você usar um marcador como o abaixo, o conteúdo será sobrescrito várias vezes.
+
+# marker: <!-- {mark} blockinfile with items -->
+
+  - name: Using Ansible blockinfile with_items
+    blockinfile:
+      dest: /tmp/teste.txt
+      block: |
+        {{ item.name }} -- {{ item.line }}
+      marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+    with_items:
+      - { name: "- Linha1", line: Hello_One }
+      - { name: "- Linha2", line: Hello_Two }
+      - { name: "- Linha3", line: Hello_Three }
+    tags: block_six
+
+# ------------------------------------------------------------------------ #
+
+# Você também pode usar o conteúdo de um arquivo externo usando o plug-in de pesquisa.
+# O arquivo deve estar disponível em sua máquina de controle Ansible.
+
+  - name: Copia conteúdo do arquivo /tmp/tmpvuJo1e para /tmp/teste.txt
+    blockinfile:
+      path: /tmp/teste.txt
+      marker: <!-- {mark} Copia conteúdo do arquivo /tmp/tmpvuJo1e -->
+      block: "{{ lookup('file', '/tmp/tmpvuJo1e') }}"
+    tags: block_seven
+
+# Mais sobre lookups 
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_lookups.html
