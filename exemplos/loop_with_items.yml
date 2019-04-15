@@ -4,7 +4,7 @@
 # vários usuários<Paste>
 
 - hosts: localhost
-
+  gather_facts: false
   tasks:
 
   - name: Instalando pacotes
@@ -14,12 +14,16 @@
        - curl
     when: ansible_os_family == "Debian"
 
+# ------------------------------------------------------------------------ #
+
   - name: Add multiplos usuários
     user: name={{ item }} state=present groups=vboxusers
     with_items:
        - testuser1
        - testuser2
     become: true
+
+# ------------------------------------------------------------------------ #
 
   - name: Removendo usuários
     user: name={{ item }} state=absent
@@ -28,10 +32,14 @@
         - testuser2
     become: true
 
+# ------------------------------------------------------------------------ #
+
     # Fazendo loop no arquivo de inventário, num grupo especifico
-    - shell: echo " {{ item }}" >> teste.txt
-      with_items: "{{groups['multi']}}"
-      tags: teste
+  - shell: echo " {{ item }}" >> teste.txt
+    with_items: "{{groups['multi']}}"
+    tags: teste
+
+# ------------------------------------------------------------------------ #
 
   - name: Copiando vários arquivos de .conf
     template: src={{ item.src }} dest={{ item.dest }}
@@ -40,3 +48,18 @@
           dest: /example/dest1/test.conf
         - src: templates/testsource2
           dest: /example/dest2/test.conf
+
+# ------------------------------------------------------------------------ #
+
+
+  - name: Criando multiplos diretórios
+    file:
+      path: "{{ item.dest }}"
+      mode: "{{item.mode}}"
+      state: directory
+      recurse: yes
+    with_items:
+      - { dest: '/tmp/devops_system1', mode: '0777'}
+      - { dest: '/tmp/devops_system2', mode: '0707'}
+      - { dest: '/tmp/devops_system3', mode: '0575'}
+    tags: multiplos_diretorios
