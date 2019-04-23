@@ -1,0 +1,200 @@
+---
+
+- hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: Procurando arquivo teste.txt
+    find:
+      paths: /tmp/
+      patterns: "teste.txt"
+    register: files_matched
+    tags: find_one
+
+  - debug:
+      msg: "{{ files_matched.files }}"
+    tags: find_two
+
+# OBS: Por padrão, o módulo find não verifica arquivos ocultos.
+# Para verificar um arquivo oculto, você precisa definir o parâmetro "hidden"
+# como True.
+
+# ------------------------------------------------------------------------ #
+
+# Se você precisar verificar os subdiretórios também para os arquivos, poderá
+# usar o parâmetro recurse. Por padrão, é definido como não.
+# O exemplo a seguir retornará todos os arquivos com extensao .txt
+
+  - name: Buscando arquivos com extensao .txt nos subdiretorios
+    find:
+      paths: /tmp/
+      patterns: "*.txt"
+      recurse: yes
+    register: files_matched_subdirectory
+    tags: find_three
+
+  - debug:
+      msg: "{{ files_matched_subdirectory.files }}"
+    tags: find_four
+
+# ------------------------------------------------------------------------ #
+
+# Se você precisar recuperar alguns valores da saída retornada
+# (como files_matched_subdirectory.files no exemplo acima), poderá fazer o seguinte.
+# O exemplo abaixo recuperará o valor do caminho do primeiro arquivo retornado.
+# Se vários arquivos forem retornados, você pode ajustar o número do índice para obter o valor desejado.
+
+  - name: Listando somente o segundo arquivo encontrado
+    find:
+      paths: /tmp/
+      patterns: "*.txt"
+      hidden: True
+    register: files_matched
+    tags: find_five
+
+  - debug:
+      msg: "{{ files_matched.files[1].path }}" # Usando índice [1]
+    tags: find_six
+
+
+# ------------------------------------------------------------------------ #
+
+# Você também pode fornecer vários padrões em um único comando.
+# Você pode separá-los com uma vírgula. Por exemplo, se você precisar encontrar
+# todos os arquivos com a extensão .txt e .log, faça o seguinte.
+
+  - name: Ansible find files multiple patterns examples
+    find:
+      paths: /tmp/
+      patterns: "*.txt,*.log"
+      recurse: yes
+      hidden: True
+    register: files_matched_log
+    tags: find_seven
+
+  - debug:
+      msg: "{{ files_matched_log }}"
+    tags: find_eight
+
+# ------------------------------------------------------------------------ #
+
+# Usando o regex do Python para corresponder ao nome do arquivo
+
+  - name: Usando regex do Python para encontrar todos os arquivos file1.txt file2.txt etc.
+    find:
+      paths: /tmp/
+      patterns: 'file[\d].txt'
+      recurse: yes
+      use_regex: yes
+    register: files_to_delete
+    tags: find_nine
+
+  - debug:
+      msg: "{{ files_to_delete }}"
+    tags: find_ten
+
+# Nota: Você tem que escapar a barra invertida se usar aspas duplas.
+# Se você usar as aspas simples, o escape não será necessário.
+
+# ------------------------------------------------------------------------ #
+
+# Encontrando todos os arquivos que são mais antigos que um tempo especificado
+# Você pode usar o parâmetro age para fornecer a idade exigida.
+# Você pode dar a idade em segundos, minutos, horas, dias e semanas, dando
+# um número e a primeira letra dessas palavras.
+
+# seconds: “5s” -> mais de 5 segundos
+# minute: “3m” -> mais de 3 minutos
+# hour: “2h” -> mais de 2 horas
+# days: “5d” -> com mais de 5 dias
+# week: “6w” -> mais de 6 semanas
+
+  - name: Encontrar arquivos com mais de 3 minutos
+    find:
+      paths: /tmp
+      age: "3m"
+    register: oldfiles
+    tags: find_eleven
+
+  - debug:
+      msg: " {{ oldfiles }}"
+    tags: find_twelve
+
+# ------------------------------------------------------------------------ #
+
+# Você também pode procurar os arquivos que são mais recentes que o tempo determinado.
+# Você só precisa usar o símbolo negativo na frente do valor de idade.
+# O exemplo a seguir retornará todos os arquivos que forem mais recentes que 5 horas.
+
+  - name: Encontrar arquivos com menos de 20 minutos de criação
+    find:
+      paths: /tmp
+      age: "-2m"
+    register: newfiles
+    tags: find_thirteen
+
+  - debug:
+      msg: " {{ newfiles }}"
+    tags: find_fourteen
+
+# ------------------------------------------------------------------------ #
+
+# Você pode procurar arquivos com base no tamanho usando a opção de size.
+# Você pode especificar o tamanho em bytes (b), kilobytes (k), megabytes (m), gigabytes (g) e terabytes (t).
+# A tarefa a seguir retorna todos os arquivos maiores que 5 megabytes.
+
+  - name: Encontra arquivos maiores que 5MB
+    find:
+      paths: /tmp/
+      size: "5m"
+    register: largerfiles
+    tags: find_fifteen
+
+  - debug:
+      msg: "{{ largerfiles }}"
+    tags: find_sixteen
+
+# ------------------------------------------------------------------------ #
+
+# Todas as opções acima podem ser usadas para procurar diretórios também.
+# Existe o parâmetro file_type que você pode definir como "directory" para especificar
+# que a pesquisa é apenas para diretórios. Por padrão, o valor é "file".
+# A tarefa abaixo retorna todos os diretórios com mais de 50 dias.
+
+  - name: Encontrar diretórios com mais de 50 dias
+    find:
+      paths: /tmp
+      age: "50d"
+      file_type: directory
+    register: directory_older50d
+    tags: find_seventeen
+
+  - debug:
+      msg: "{{ directory_older50d }}"
+    tags: find_eighteen
+
+# ------------------------------------------------------------------------ #
+
+# Armazenando os nomes de arquivos em um registro:
+# Tudo isso é útil quando você pode usar os arquivos retornados para algumas
+# tarefas, como excluí-los. O valor de retorno pode ser armazenado em uma variável e
+# usando as variables.files podemos percorrer a lista.
+
+# Por exemplo, Se você precisar excluir todos os arquivos com a extensão .log, que
+# são mais antigos que 100 dias, faça o seguinte.
+
+  - name: Encontrando arquivos com mais de 100 dias
+    find:
+      paths: /tmp
+      patterns: "*.log"
+      age: "100d"
+      recurse: yes
+      hidden: True
+    register: files_to_delete
+    tags: find_nineteen
+
+  - name: Excluindo arquivos com mais de 100 dias
+    file:
+      path: "{{ item.path }}"
+      state: absent
+    with_items: "{{ files_to_delete.files }}"
+    tags: find_twenty
