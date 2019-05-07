@@ -300,3 +300,16 @@
       name: "{{ itau_fedora }}"
     tags: itau
 
+  - name: Instalando RPM-Fusion-Free-Release
+    dnf:
+      name: https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+      state: present
+    register: install_rpm_fusion
+    tags: install_rpm_fusion
+
+  - name: Instalando VLC Player
+    dnf:
+      name: vlc
+      state: latest
+    when: install_rpm_fusion is succeeded
+    tags: install_vlc
