@@ -194,6 +194,7 @@
     dnf:
       name: zsh
       state: latest                                   
+    register: install_zsh
     tags: install_zsh
 
 
@@ -256,6 +257,7 @@
     dnf:
       name: neovim
       state: latest
+    register: install_neovim
     tags: install_neovim
 
   - name: Setando NeoVim como editor padrão
