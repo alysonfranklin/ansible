@@ -10,11 +10,11 @@
       tags: always
       when: ansible_os_family == "Debian"
 
-    - name: Executando tarefa na distro baseada em CentOS/RHEL
+    - name: Executando tarefa na distro baseada em CentOS/RHEL/Fedora
       include_role:
          name: fedora
       tags: always
-      when: ansible_distribution == "CentOS"      
+      when: ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
 
 
 
