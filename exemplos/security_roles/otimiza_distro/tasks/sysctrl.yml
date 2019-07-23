@@ -1,0 +1,9 @@
+---
+- include_vars: harden.yml
+
+- name: Configure System Ctrl.
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items: "{{ harden }}"

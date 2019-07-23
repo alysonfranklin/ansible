@@ -1,0 +1,12 @@
+---
+- name: Carrega vairáveis
+  include_vars: '{{ ansible_os_family }}.yml'
+
+- name: Adicione informações de banner no sshd.conf
+  lineinfile: dest=/etc/ssh/sshd_config regexp='#Banner /etc/issue.net' line="Banner /etc/issue.net"
+
+- name: Atualizar banner do ssh
+  template: src=ssh-banner.conf dest=/etc/issue.net
+
+- name: Reinicia ssh
+  service: name='{{ sshd }}' state=restarted

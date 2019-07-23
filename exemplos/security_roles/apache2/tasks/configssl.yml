@@ -1,0 +1,26 @@
+---
+- name: Carregando as variáveis
+  include_vars: '{{ ansible_os_family }}.yml'
+
+- name: Crie o diretório httpd SSL
+  file:
+    path: '{{ apache2_install_home }}/ssl'
+    state: directory
+    mode: 0755
+
+- name: Gerando certificados SSL autoassinados
+  command: openssl req -x509 -nodes -sha256 -days 99999 -newkey rsa:2048 -keyout {{ apache2_install_home }}/ssl/server.key -out {{ apache2_install_home }}/ssl/server.cert -subj "/C=US/ST=NC/L=youtube/O=8gwifi/CN=devops.com"
+  args:
+    creates: '{{ apache2_install_home }}/ssl/server.cert'
+  notify:
+    - restart apache2
+
+- name: Configurar permissões nos arquivos de certificados server.cert e server.key
+  file:
+    path: "{{ item.dest }}"
+    mode: "{{item.mode}}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  with_items:
+    - { dest: '{{ apache2_install_home }}/ssl/server.key', mode: '0600', group: '{{ apache2_group }}', owner: '{{ apache2_user }}'}
+    - { dest: '{{ apache2_install_home }}/ssl/server.cert', mode: '0600', group: '{{ apache2_group }}', owner: '{{ apache2_user }}'}

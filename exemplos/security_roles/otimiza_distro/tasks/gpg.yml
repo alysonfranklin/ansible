@@ -1,0 +1,17 @@
+---
+
+- name: Obter o arquivo do repositório yum
+  shell: 'find /etc/yum.repos.d/ -type f -name *.repo'
+  changed_when: False
+  register: yum_repository
+  when: ansible_os_family == 'RedHat'
+
+- name: Ativar gpg-check para yum-repos
+  replace:
+    dest: '{{ item }}'
+    regexp: '^\s*gpgcheck: 0'
+    replace: 'gpgcheck: 1'
+  with_flattened:
+    - '/etc/yum.conf'
+    - '{{ yum_repository.stdout_lines| default([]) }}'
+  when: ansible_os_family == 'RedHat'

@@ -1,0 +1,36 @@
+---
+  - include_vars: users.yml
+
+  - name: Criando usuários com diretório home
+    user:
+      name: "{{ item.username }}"
+      shell: /bin/bash
+      create_home: yes
+      comment: "Criado via Ansible"
+    with_items: "{{ users }}"
+
+  - name: Setup | authorized keys
+    authorized_key:
+      user: "{{ item.username }}"
+      key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    when: '{{ item.use_sudo }} == True'
+    with_items: '{{ users }}'
+
+  - name: Atualizando e validando o arquivo sudoers
+    lineinfile:
+      dest: "/etc/sudoers"
+      insertafter: EOF
+      line: "{{ item.username }} ALL=(ALL) NOPASSWD: ALL"
+      regexp: "^{{ item.username }} .*"
+      state: present
+    when: "{{ item.use_sudo }} == True"
+    with_items: "{{ users }}"
+
+  - include_vars: deleteusers.yml
+
+  - name: Excluindo usuários
+    user:
+      name: '{{ item.username }}'
+      state: absent
+      remove: yes
+    with_items: "{{ users }}"

@@ -1,0 +1,38 @@
+---
+
+- name: Carregando as variáveis
+  include_vars: '{{ ansible_os_family }}.yml'
+
+- name: Instalando apache2
+  yum: 
+    name: [httpd, mod_ssl]
+    state: present
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
+
+- name: Determine se o selinux está habilitado
+  command: getenforce
+  register: getenforce
+  ignore_errors: true
+  changed_when: false
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'
+
+- name: Habilita firewall-cmd
+  systemd:
+    name: firewalld
+    state: restarted
+    enabled: yes
+
+- name: Definir web como política padrão
+  command: firewall-cmd --set-default-zone=dmz
+
+- name: Permitir http/https
+  command: firewall-cmd --zone=dmz --permanent --add-service=http --add-service=https
+
+- name: Criar grupo apache2
+  group: name='{{apache2_group}}' state=present
+
+- name : Criando usuário apache e add ao grupo apache
+  user: name='{{ apache2_user }}' group='{{ apache2_group }}'
+
+- name: Configure o diretório de configurações do apache2
+  file: path={{ apache2_install_home }} state=directory owner={{apache2_user}} group={{apache2_group}} mode=0755 recurse=yes

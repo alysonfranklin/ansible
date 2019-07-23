@@ -1,0 +1,42 @@
+#Restringir Core Dumps
+---
+- name: criar o diretório limits.d se ele não existir
+  file:
+    path: '/etc/security/limits.d'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+    state: 'directory'
+
+- name: criar limits.conf
+  template:
+    src: 'limits.conf'
+    dest: '/etc/security/limits.d/hardcore.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0440'
+
+
+- name: Configurar o Ctrl do sistema para restringir despejos principais
+  sysctl:
+    name: fs.suid_dumpable
+    value: 0
+    state: present
+
+# Proteção contra ataques de estouro de buffer
+# Ubuntu tem proteção NX ativada por padrão
+- name: Configuração do ExecShield
+  sysctl:
+    name: kernel.exec-shield
+    value: 1
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+
+# Randamozed Virtual Memory Placement
+# Ubuntu tem proteção NX ativada por padrão
+- name: Randamozed Virtual Memory Placement
+  sysctl:
+    name: kernel.randomize_va_space
+    value: 2
+    state: present

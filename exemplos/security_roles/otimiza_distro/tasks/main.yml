@@ -1,0 +1,7 @@
+---
+- include: sysctrl.yml
+- include: ssh-banner.yml
+- include: rootkit.yml
+- include: legacyservice.yml
+- include: process.yml
+- include: gpg.yml

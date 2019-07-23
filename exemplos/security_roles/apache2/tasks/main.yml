@@ -1,0 +1,54 @@
+---
+- include: install.yml
+- include: configssl.yml
+
+- name: Carregando as variáveis
+  include_vars: '{{ ansible_os_family }}.yml' 
+
+- name : Habilitando Mod_Rewrite
+  apache2_module: name=rewrite state=present
+  notify:
+          - restart apache2
+
+- name : Habilitando MOD_SSL
+  apache2_module: name=ssl state=present
+  notify:
+          - restart apache2
+
+- name: Configure httpd.
+  lineinfile:
+    dest: "{{ apache2_install_home }}/conf/httpd.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items: "{{ apache2_ports_configuration }}"
+  notify: restart apache2
+
+- name: Criar diretório de site httpd
+  file:
+    path: '{{ apache2_site_dir }}'
+    state: directory
+    owner: '{{ apache2_user }}'
+    group: '{{ apache2_user }}'
+    mode: 0755
+
+- name: Excluir arquivo SSL.conf padrão
+  file:
+    path: '{{ apache2_conf_path }}/ssl.conf'
+    state: absent
+
+- name: Adicione a configuração do vhosts do apache.
+  template:
+    src: "httpd.conf"
+    dest: "{{ apache2_conf_path }}/{{ ansible_hostname }}.conf"
+    owner: '{{ apache2_user }}'
+    group: '{{ apache2_user }}'
+    mode: 0644
+  notify: restart apache2
+
+
+- name: inicie o apache2 e configure-o para inicializar automaticamente
+  service:
+    name: '{{ apache2_init_name }}'
+    state: started
+    enabled: yes

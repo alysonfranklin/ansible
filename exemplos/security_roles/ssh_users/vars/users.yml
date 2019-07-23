@@ -1,0 +1,19 @@
+---
+users:
+  - username: alyson
+    use_sudo: yes
+
+  - username: lavynia
+    use_sudo: yes
+
+  - username: andre
+    use_sudo: yes
+
+  - username: allan
+    use_sudo: no
+
+  - username: john
+    use_sudo: no
+
+  - username: carlos
+    use_sudo: no

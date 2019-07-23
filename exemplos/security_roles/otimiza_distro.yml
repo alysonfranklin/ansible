@@ -1,0 +1,6 @@
+---
+- hosts: vagrant
+  become: yes
+  gather_facts: yes
+  roles:
+    - { role: otimiza_distro }

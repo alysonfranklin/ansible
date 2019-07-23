@@ -1,0 +1,16 @@
+---
+- name: Remover serviços herdados que não são usados ​​no sistema de produção
+  package:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - telnet-server
+    - telnet
+    - rsh-server
+    - rsh
+    - ypserv
+    - tftp
+    - talk-server
+    - xorg-x11-server-commo
+    - dhcp
+    - net-snmp

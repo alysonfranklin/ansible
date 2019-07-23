@@ -1,0 +1,14 @@
+---
+
+apache2_ports_configuration:
+  - regexp: "^Listen "
+    line: "Listen {{ apache2_listen_port_ssl }}"
+
+  - regexp: "^User "
+    line: "User {{ apache2_user }}"
+
+  - regexp: "^Group "
+    line: "Group {{ apache2_user }}"
+    
+  - regexp: "^#?NameVirtualHost "
+    line: "NameVirtualHost {{ ansible_default_ipv4.address }}:{{ apache2_listen_port_ssl }}"

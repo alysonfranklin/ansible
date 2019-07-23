@@ -1,0 +1,12 @@
+---
+
+# Criando multiplos usuários
+# Configurando chave ssh
+# Configurando acesso sudo dos usuários criados
+# Deletando multiplos usuários
+
+- hosts: vagrant
+  become: yes
+  gather_facts: false
+  roles:
+    - { role: ssh_users }

@@ -1,0 +1,8 @@
+---
+- hosts: vagrant
+  become: yes
+  gather_facts: yes
+  roles:
+    - ssh_users
+    - otimiza_distro
+    - apache2
