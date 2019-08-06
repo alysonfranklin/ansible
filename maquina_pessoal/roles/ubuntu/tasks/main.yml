@@ -1,24 +1,15 @@
 ---
 
-  - name: Instalando pacote apt-transport-https - Distros Debian/Ubuntu
+  - name: Instalando pacotes essenciais - Distros Debian/Ubuntu
     apt:
-      name: apt-transport-https
-      update_cache: yes
+      name: [vim, git, curl, software-properties-common, tmux, zip, unzip, rar, unrar, powerline, apt-transport-https, vlc]
       state: latest
-    register: apt_https
-    tags: apt_https
+    tags: pacotes_essenciais
 
 
   - name: Instalando TeamViewer - Distros Ubuntu/Debian
     apt:
       deb: "{{ teamviewer }}"
-
-
-  - name: Instalando vim, git, curl, tmux & software-properties-common - Distros Debian/Ubuntu
-    apt:
-      name: [vim, git, curl, software-properties-common, tmux, zip, unzip, rar, unrar]
-      state: latest
-    tags: pacotes_essenciais
 
 
   - name: Configurando tmux.conf
@@ -359,10 +350,10 @@
       append: yes
 
 
-  - name: Instalando Forticlient/SSLVPN
-    apt:
-      deb: "{{ forticlient }}"
-    tags: forticlient
+      # - name: Instalando Forticlient/SSLVPN
+      #   apt:
+      #     deb: "{{ forticlient }}"
+      #   tags: forticlient
 
 
   - name: Instalando Whois
