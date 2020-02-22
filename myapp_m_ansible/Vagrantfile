@@ -4,52 +4,117 @@
 # README
 #
 # Getting Started:
-# 1. vagrant plugin install vagrant-hostmanager
-# 2. vagrant up
-# 3. vagrant ssh
-#
-# Deve colocá-lo isso no host de controle
-#  com acesso, por nome, a outras vms
+# 1. vagrant plugin install vagrant-hostmanager vagrant-disksize
+# 2. vagrant plugin install vagrant-disksize
+
 Vagrant.configure(2) do |config|
   config.hostmanager.enabled = true
-
-  config.vm.box = "ubuntu/trusty64"
-
-  config.vm.define "control", primary: true do |h|
-    h.vm.network "private_network", ip: "192.168.135.10"
-    h.vm.provision :shell, :inline => <<'EOF'
-if [ ! -f "/home/alyson/.ssh/id_rsa" ]; then
-  ssh-keygen -t rsa -N "" -f /home/vagrant/.ssh/id_rsa
-fi
-cp /home/alyson/.ssh/id_rsa.pub /vagrant/control.pub
-
-cat << 'SSHEOF' > /home/alyson/.ssh/config
-Host *
-  StrictHostKeyChecking no
-  UserKnownHostsFile=/dev/null
-SSHEOF
-
-chown -R vagrant:vagrant /home/vagrant/.ssh/
-EOF
+  config.vm.box = "envimation/ubuntu-xenial"
+  config.vm.define "master-k8s", primary: true do |vml|
+  vml.vm.network "private_network", ip: "192.168.135.10"
+  vml.vm.hostname = "master-k8s"
+  vml.vm.provider "virtualbox" do |vb|
+  vb.memory = "4024"
+  vb.cpus = 2
+  config.disksize.size = "20GB"
+  vb.gui = false
+  vb.name = "master-k8s"
+  vb.linked_clone = true
+  
+  vml.vm.provision "shell", run: "always", inline: <<-SHELL
+        apt update ; apt install -y vim lsb-core inetutils-ping apt-transport-https ca-certificates \
+        curl gnupg-agent software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo \ apt-key add -
+        add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable"
+        apt update ; apt install -y docker-ce
+        usermod -aG docker vagrant
+        swapoff -a && swapon -s
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+        apt update; apt install -y kubelet=1.14.3-00 kubeadm=1.14.3-00 kubectl=1.14.3-00
+      SHELL
+    end
   end
 
-  config.vm.define "lb01" do |h|
-    h.vm.network "private_network", ip: "192.168.135.101"
-    h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
+  config.vm.define "node1-k8s" do |vml|
+  vml.vm.network "private_network", ip: "192.168.135.101"
+  vml.vm.hostname = "node1-k8s"
+  vml.vm.provider "virtualbox" do |vb|
+  vb.memory = "1024"
+  vb.cpus = 1
+  config.disksize.size = "10GB"
+  vb.gui = false
+  vb.name = "node1-k8s"
+  vb.linked_clone = true
+  
+  vml.vm.provision "shell", run: "always", inline: <<-SHELL
+        apt update ; apt install -y vim lsb-core inetutils-ping apt-transport-https ca-certificates \
+        curl gnupg-agent software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo \ apt-key add -
+        add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable"
+        apt update ; apt install -y docker-ce
+        usermod -aG docker vagrant
+        swapoff -a && swapon -s
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+        apt update; apt install -y kubelet=1.14.3-00 kubeadm=1.14.3-00 kubectl=1.14.3-00
+      SHELL
+    end
   end
 
-  config.vm.define "app01" do |h|
-    h.vm.network "private_network", ip: "192.168.135.111"
-    h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
+  config.vm.define "node2-k8s" do |vml|
+  vml.vm.network "private_network", ip: "192.168.135.102"
+  vml.vm.hostname = "node2-k8s"
+  vml.vm.provider "virtualbox" do |vb|
+  vb.memory = "1024"
+  vb.cpus = 1
+  config.disksize.size = "10GB"
+  vb.gui = false
+  vb.name = "node2-k8s"
+  vb.linked_clone = true
+  
+  vml.vm.provision "shell", run: "always", inline: <<-SHELL
+        apt update ; apt install -y vim lsb-core inetutils-ping apt-transport-https ca-certificates \
+        curl gnupg-agent software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo \ apt-key add -
+        add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable"
+        apt update ; apt install -y docker-ce
+        usermod -aG docker vagrant
+        swapoff -a && swapon -s
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+        apt update; apt install -y kubelet=1.14.3-00 kubeadm=1.14.3-00 kubectl=1.14.3-00
+      SHELL
+    end
   end
 
-  config.vm.define "app02" do |h|
-    h.vm.network "private_network", ip: "192.168.135.112"
-    h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
-  end
-
-  config.vm.define "db01" do |h|
-    h.vm.network "private_network", ip: "192.168.135.121"
-    h.vm.provision :shell, inline: 'cat /vagrant/control.pub >> /home/vagrant/.ssh/authorized_keys'
+  config.vm.define "lb-k8s" do |vml|
+  vml.vm.network "private_network", ip: "192.168.135.103"
+  vml.vm.hostname = "lb-k8s"
+  vml.vm.provider "virtualbox" do |vb|
+  vb.memory = "1024"
+  vb.cpus = 1
+  config.disksize.size = "10GB"
+  vb.gui = false
+  vb.name = "lb-k8s"
+  vb.linked_clone = true
+  
+  vml.vm.provision "shell", run: "always", inline: <<-SHELL
+        apt update ; apt install -y vim lsb-core inetutils-ping apt-transport-https ca-certificates \
+        curl gnupg-agent software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo \ apt-key add -
+        add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable"
+        apt update ; apt install -y docker-ce
+        usermod -aG docker vagrant
+        swapoff -a && swapon -s
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+        apt update; apt install -y kubelet=1.14.3-00 kubeadm=1.14.3-00 kubectl=1.14.3-00
+      SHELL
+    end
   end
 end
