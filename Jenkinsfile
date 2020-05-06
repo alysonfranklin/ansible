@@ -12,23 +12,26 @@ pipeline {
             steps {
                 sh '''
                 docker run hashicorp/terraform:$TERRAFORM_VERSION version
-                docker run hashicorp/terraform:0.12.19 init -force-copy -lock=false -input=false
-                docker run hashicorp/terraform:0.12.19 validate
+                docker run hashicorp/terraform:$TERRAFORM_VERSION init -force-copy -lock=false -input=false
+                docker run hashicorp/terraform:$TERRAFORM_VERSION validate
                 '''
             }
         }
         stage('Build - Terraform Plan') {
             steps {
-                echo "docker run hashicorp/terraform:0.12.19 plan -lock=false -input=false"
+                sh "docker run hashicorp/terraform:$TERRAFORM_VERSION plan -lock=false -input=false"
             }
         }
         stage('Manual Approval') {
-            timeout(time: 2, unit: "MINUTES") {
-                input message: 'Deseja aprovar a implantação em PROD?', ok: 'Yes'
+            input {
+                message 'Deseja realizar o Deploy?'
+                ok 'Yes!'
+                parameters {
+                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Ambiente de implantação')
                 }
             }
             steps {
-                echo "docker run hashicorp/terraform:0.12.19 apply -auto-approve"
+                sh "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
             }
         }        
     }
