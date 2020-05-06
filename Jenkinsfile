@@ -4,7 +4,7 @@ pipeline {
         RELEASE='v0.0.1'
     }
     stages {
-        stage("Pre Build"){
+        stage("PreBuild - Terraform init"){
             steps {
                 sh '''
                 docker run hashicorp/terraform:0.12.19 version
