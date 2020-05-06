@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Build - Terraform Plan') {
             steps {
-                sh "docker run hashicorp/terraform:$TERRAFORM_VERSION plan -lock=false -input=false"
+                echo "docker run hashicorp/terraform:$TERRAFORM_VERSION plan -lock=false -input=false"
             }
         }
         stage('Manual Approval') {
@@ -31,7 +31,7 @@ pipeline {
                 }
             }
             steps {
-                sh "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
+                echo "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
             }
         }        
     }
