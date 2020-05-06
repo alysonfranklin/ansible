@@ -19,7 +19,9 @@ pipeline {
             }
         }
 stage('Deploy') {
+    script {
     input "Deploy to prod"
+  }
 }
         stage('PostBuild - Terraform Apply') {
             steps {
