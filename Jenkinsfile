@@ -18,12 +18,9 @@ pipeline {
                 echo 'docker run hashicorp/terraform:0.12.19 plan -lock=false'
             }
         }
-        stage('Manual Approve') {
-            input {
-                message 'Deploy?'
-                ok 'Do it!'
-            }
-        }
+stage('Deploy') {
+    input "Deploy to prod"
+}
         stage('PostBuild - Terraform Apply') {
             steps {
                 echo "terraform apply"
