@@ -1,6 +1,7 @@
 pipeline{
-    agent{
-        label "node"
+    agent any
+    environment {
+        RELEASE='v0.0.1'
     }
     stages{
         stage("A"){
