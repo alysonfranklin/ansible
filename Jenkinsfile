@@ -4,36 +4,40 @@ pipeline {
         RELEASE='20.04'
     }
     stages {
-        stage('Build') {
+        stage('PreBuild - Terraform Init') {
             agent any
             environment {
-                LOG_LEVEL='INFO'
+                TERRAFORM_VERSION='0.12.19'
             }
             steps {
-                echo "Building release ${RELEASE} with log level ${LOG_LEVEL}..."
+                sh '''
+                docker run hashicorp/terraform:$TERRAFORM_VERSION version
+                docker run hashicorp/terraform:0.12.19 init -force-copy -lock=false -input=false
+                docker run hashicorp/terraform:0.12.19 validate
+                '''
             }
         }
-        stage('Test') {
+        stage('Build - Terraform Plan') {
             steps {
-                echo "Testing release ${RELEASE}..."
+                sh "docker run hashicorp/terraform:0.12.19 plan -lock=false -input=false"
             }
         }
-        stage('Deploy') {
+        stage('Manual Approval') {
             input {
-                message 'Deploy?'
-                ok 'Do it!'
+                message 'Deseja realizar o Deploy?'
+                ok 'Yes!'
                 parameters {
-                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Target deployment environment')
+                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Ambiente de implantação')
                 }
             }
             steps {
-                echo "Deploying release ${RELEASE} to environment ${TARGET_ENVIRONMENT}"
+                sh "docker run hashicorp/terraform:0.12.19 apply -auto-approve"
             }
         }        
     }
     post{
         always {
-             echo 'Prints whether deploy happened or not, success or failure'
+             echo 'Imprime se a implantação ocorreu ou não com sucesso.'
         }
     }
 }
