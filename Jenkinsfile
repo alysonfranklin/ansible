@@ -22,9 +22,6 @@ pipeline {
             input {
                 message 'Deploy?'
                 ok 'Do it!'
-                parameters {
-                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'TARGET deployment environment')
-                }
             }
         }
         stage('PostBuild - Terraform Apply') {
