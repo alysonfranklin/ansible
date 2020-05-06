@@ -1,32 +1,39 @@
 pipeline {
     agent any
     environment {
-        RELEASE='v0.0.1'
+        RELEASE='20.04'
     }
     stages {
-        stage("PreBuild - Terraform Init"){
+        stage('Build') {
+            agent any
+            environment {
+                LOG_LEVEL='INFO'
+            }
             steps {
-                sh '''
-                docker run hashicorp/terraform:0.12.19 version
-                docker run hashicorp/terraform:0.12.19 init
-                docker run hashicorp/terraform:0.12.19 validate
-                '''
+                echo "Building release ${RELEASE} with log level ${LOG_LEVEL}..."
             }
         }
-        stage('Build - Terraform Plan') {
+        stage('Test') {
             steps {
-                echo 'docker run hashicorp/terraform:0.12.19 plan -lock=false'
+                echo "Testing release ${RELEASE}..."
             }
         }
-stage('Deploy') {
-    script {
-    input "Deploy to prod"
-  }
-}
-        stage('PostBuild - Terraform Apply') {
-            steps {
-                echo "terraform apply"
+        stage('Deploy') {
+            input {
+                message 'Deploy?'
+                ok 'Do it!'
+                parameters {
+                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Target deployment environment')
+                }
             }
+            steps {
+                echo "Deploying release ${RELEASE} to environment ${TARGET_ENVIRONMENT}"
+            }
+        }        
+    }
+    post{
+        always {
+             echo 'Prints whether deploy happened or not, success or failure'
         }
     }
 }
