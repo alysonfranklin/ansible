@@ -25,6 +25,7 @@ pipeline {
         stage('Manual Approval') {
             timeout(time: 2, unit: "MINUTES") {
                 input message: 'Deseja aprovar a implantação em PROD?', ok: 'Yes'
+                }
             }
             steps {
                 echo "docker run hashicorp/terraform:0.12.19 apply -auto-approve"
@@ -36,4 +37,3 @@ pipeline {
              echo 'Imprime se a implantação ocorreu ou não com sucesso.'
         }
     }
-}
