@@ -15,7 +15,21 @@ pipeline {
         }
         stage('Build - Terraform Plan') {
             steps {
-                sh 'docker run hashicorp/terraform:0.12.19 plan -lock=false'
+                echo 'docker run hashicorp/terraform:0.12.19 plan -lock=false'
+            }
+        }
+        stage('Manual Approve') {
+            input {
+                message 'Deploy?'
+                ok 'Do it!'
+                parameters {
+                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'TARGET deployment environment')
+                }
+            }
+        }
+        stage('PostBuild - Terraform Apply') {
+            steps {
+                echo "terraform apply"
             }
         }
     }
