@@ -4,7 +4,7 @@ pipeline {
         RELEASE='v0.0.1'
     }
     stages {
-        stage("PreBuild - Terraform init"){
+        stage("PreBuild - Terraform Init"){
             steps {
                 sh '''
                 docker run hashicorp/terraform:0.12.19 version
@@ -13,7 +13,7 @@ pipeline {
                 '''
             }
         }
-        stage('Build - Terraform Apply') {
+        stage('Build - Terraform Plan') {
             steps {
                 sh 'docker run hashicorp/terraform:0.12.19 plan -lock=false'
             }
