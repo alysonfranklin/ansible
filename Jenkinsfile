@@ -1,16 +1,34 @@
-pipeline {
-  agent {
-    docker {
-      image 'hashicorp/terraform:0.12.19'
+pipeline{
+    agent{
+        label "node"
     }
-
-  }
-  stages {
-    stage('pre build') {
-      steps {
-        sh 'terraform version'
-      }
+    stages{
+        stage("A"){
+            steps{
+                echo "========executing A========"
+            }
+            post{
+                always{
+                    echo "========always========"
+                }
+                success{
+                    echo "========A executed successfully========"
+                }
+                failure{
+                    echo "========A execution failed========"
+                }
+            }
+        }
     }
-
-  }
+    post{
+        always{
+            echo "========always========"
+        }
+        success{
+            echo "========pipeline executed successfully ========"
+        }
+        failure{
+            echo "========pipeline execution failed========"
+        }
+    }
 }
