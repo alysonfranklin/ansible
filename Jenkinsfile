@@ -23,12 +23,8 @@ pipeline {
             }
         }
         stage('Manual Approval') {
-            input {
-                message 'Deseja realizar o Deploy?'
-                ok 'Sim!'
-                abort 'Não!'
-                parameters {
-                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Ambiente de implantação')
+            timeout(time: 2, unit: "MINUTES") {
+                input message: 'Deseja aprovar a implantação em PROD?', ok: 'Yes'
                 }
             }
             steps {
