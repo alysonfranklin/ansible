@@ -37,3 +37,4 @@ pipeline {
              echo 'Imprime se a implantação ocorreu ou não com sucesso.'
         }
     }
+}
