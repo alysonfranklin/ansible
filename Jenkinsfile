@@ -1,35 +1,22 @@
-pipeline{
+pipeline {
     agent any
     environment {
         RELEASE='v0.0.1'
     }
-    stages{
-        stage("A"){
-            steps{
-                echo "========executing A========"
-            }
-            post{
-                always{
-                    echo "========always========"
-                }
-                success{
-                    echo "========A executed successfully========"
-                }
-                failure{
-                    echo "========A execution failed========"
-                }
+    stages {
+        stage("Pre Build"){
+            steps {
+                sh '''
+                docker run hashicorp/terraform:0.12.19 version
+                docker run hashicorp/terraform:0.12.19 init
+                docker run hashicorp/terraform:0.12.19 validate
+                '''
             }
         }
-    }
-    post{
-        always{
-            echo "========always========"
-        }
-        success{
-            echo "========pipeline executed successfully ========"
-        }
-        failure{
-            echo "========pipeline execution failed========"
+        stage('Build - Terraform Apply') {
+            steps {
+                sh 'docker run hashicorp/terraform:0.12.19 plan -lock=false'
+            }
         }
     }
 }
