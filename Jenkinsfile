@@ -1,13 +1,14 @@
 pipeline {
     agent any
     environment {
-        RELEASE='20.04'
+        TERRAFORM_VERSION='0.12.19'
     }
     stages {
         stage('PreBuild - Terraform Init') {
             agent any
             environment {
-                TERRAFORM_VERSION='0.12.19'
+                RELEASE='20.04'
+
             }
             steps {
                 sh '''
