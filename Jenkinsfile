@@ -38,7 +38,8 @@ pipeline {
     }
     post{
         always {
-             echo 'Imprime se a implantação ocorreu ou não com sucesso.'
+             slackSend channel: '#builds',
+                 message: "Release, success: ${currentBuild.fullDisplayName}."
         }
     }
 }
