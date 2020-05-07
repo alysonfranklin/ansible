@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Manual Approval') {
           when {
-            branch '*/master'
+            branch '*/demo2'
             }
             // Será necessário aprovar manualmente o deploy para o ambiente de PROD.
             input {
