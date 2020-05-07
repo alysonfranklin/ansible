@@ -24,6 +24,7 @@ pipeline {
             }
         }
         stage('Manual Approval') {
+            // Será necessário aprovar manualmente o deploy para o ambiente de PROD.
             input {
                 message 'Deseja realizar o Deploy?'
                 ok 'Yes!'
@@ -37,6 +38,7 @@ pipeline {
         }        
     }
     post{
+        // Envia mensagem para o canal no Slack
         success {
              slackSend channel: '#deploys',
                  color: 'good',
