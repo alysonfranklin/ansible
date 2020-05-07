@@ -37,7 +37,7 @@ pipeline {
         }        
     }
     post{
-        always {
+        success {
              slackSend channel: '#deploys',
                  message: "Release, success: ${currentBuild.fullDisplayName}."
         }
