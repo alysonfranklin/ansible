@@ -3,6 +3,9 @@ pipeline {
     environment {
         TERRAFORM_VERSION='0.12.19'
     }
+    options {
+      timeout(1)
+  }
     stages {
         stage('PreBuild - Terraform Init') {
             agent any
