@@ -39,7 +39,13 @@ pipeline {
     post{
         success {
              slackSend channel: '#deploys',
-                 message: "Release, success: ${currentBuild.fullDisplayName}."
+                 color: 'good',
+                 message: "Release, SUCCESS: ${currentBuild.fullDisplayName}."
+        }
+        failure {
+            slackSend channel: '#deploys',
+                color: 'danger',
+                message: "Release, FAILED: ${currentBuild.fullDisplayName}."
         }
     }
 }
