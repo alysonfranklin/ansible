@@ -48,10 +48,10 @@ pipeline {
                 color: 'danger',
                 message: "O deploy FALHOU: ${currentBuild.fullDisplayName}."
         }
-        abort {
+        aborted {
             slackSend channel: '#deploys',
                 color: 'yellow',
-                message: "O deploy foi cancelado: ${currentBuild.fullDisplayName}."
+                message: "O deploy foi cancelado/abortado: ${currentBuild.fullDisplayName}."
         }
     }
 }
