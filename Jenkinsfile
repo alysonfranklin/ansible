@@ -3,9 +3,6 @@ pipeline {
     environment {
         TERRAFORM_VERSION='0.12.19'
     }
-    options {
-      timeout(1)
-  }
     stages {
         stage('PreBuild - Terraform Init') {
             agent any
@@ -37,6 +34,10 @@ pipeline {
             }
             steps {
                 echo "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
+            }
+            // Se o deploy não for aprovado em 1 minuto, ele será cancelado.
+            options {
+              timeout(1)
             }
         }        
     }
