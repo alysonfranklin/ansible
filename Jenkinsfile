@@ -33,7 +33,6 @@ pipeline {
             }
             steps {
                 echo "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
-                sh 'exit 1'
             }
         }        
     }
