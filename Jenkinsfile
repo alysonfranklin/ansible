@@ -35,9 +35,9 @@ pipeline {
             steps {
                 echo "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
             }
-            // Se o deploy não for aprovado em 1 minuto, ele será cancelado.
+            // Se o deploy não for aprovado em 5 minutos, ele será cancelado.
             options {
-              timeout(1)
+              timeout(5)
             }
         }        
     }
