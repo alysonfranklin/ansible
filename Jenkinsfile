@@ -24,9 +24,6 @@ pipeline {
             }
         }
         stage('Manual Approval') {
-          when {
-            branch '*/demo2'
-            }
             // Será necessário aprovar manualmente o deploy para o ambiente de PROD.
             input {
                 message 'Deseja realizar o Deploy?'
@@ -37,6 +34,9 @@ pipeline {
             }
             steps {
                 echo "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
+                  when {
+                    branch '*/demo2'
+                }
             }
 
             // Se o deploy não for aprovado em 5 minutos, ele será cancelado.
