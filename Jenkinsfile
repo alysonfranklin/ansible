@@ -46,7 +46,12 @@ pipeline {
         failure {
             slackSend channel: '#deploys',
                 color: 'danger',
-                message: "O deploy FALHOU ${currentBuild.fullDisplayName}."
+                message: "O deploy FALHOU: ${currentBuild.fullDisplayName}."
+        }
+        abort {
+            slackSend channel: '#deploys',
+                color: 'yellow',
+                message: "O deploy foi cancelado: ${currentBuild.fullDisplayName}."
         }
     }
 }
