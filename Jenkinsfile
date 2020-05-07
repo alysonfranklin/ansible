@@ -33,6 +33,7 @@ pipeline {
             }
             steps {
                 echo "docker run hashicorp/terraform:$TERRAFORM_VERSION apply -auto-approve"
+                sh 'exit 1'
             }
         }        
     }
@@ -40,12 +41,12 @@ pipeline {
         success {
              slackSend channel: '#deploys',
                  color: 'good',
-                 message: "Release, SUCCESS: ${currentBuild.fullDisplayName}."
+                 message: "O deploy rodou com SUCESSO: ${currentBuild.fullDisplayName}."
         }
         failure {
             slackSend channel: '#deploys',
                 color: 'danger',
-                message: "Release, FAILED: ${currentBuild.fullDisplayName}."
+                message: "O deploy FALHOU ${currentBuild.fullDisplayName}."
         }
     }
 }
