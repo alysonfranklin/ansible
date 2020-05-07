@@ -38,6 +38,7 @@ pipeline {
     }
     post{
         success {
+             archiveArtifacts 'test-results.txt'
              slackSend channel: '#deploys',
                  color: 'good',
                  message: "O deploy rodou com SUCESSO: ${currentBuild.fullDisplayName}."
