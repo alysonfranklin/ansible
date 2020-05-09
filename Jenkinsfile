@@ -46,8 +46,7 @@ pipeline {
         success {
              slackSend channel: '#deploys',
                  color: 'good',
-                 message: "O deploy (${currentBuild.fullDisplayName}) rodou com SUCESSO!
-                 Link para visualizar o resultado final: $BUILD_URL"
+                 message: "O deploy (${currentBuild.fullDisplayName}) rodou com SUCESSO! \nLink para visualizar o resultado final: $BUILD_URL"
         }
         failure {
             slackSend channel: '#deploys',
